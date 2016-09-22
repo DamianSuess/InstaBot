@@ -6,9 +6,13 @@ using System.Threading.Tasks;
 
 namespace InstaBot.Console
 {
-    class Program
+    public class IntagramException : Exception
     {
-        static void Main(string[] args)
+        public IntagramException()
+        {
+        }
+
+        public IntagramException(string message) : base(message)
         {
         }
     }
