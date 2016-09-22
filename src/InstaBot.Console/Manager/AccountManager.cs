@@ -21,7 +21,7 @@ namespace InstaBot.Console.Manager
         Task<ExploreResponseMessage> Explore();
     }
 
-    public class UserManager : BaseManager, IUserManager
+    public class AccountManager : BaseManager, IUserManager
     {
         private const string GetInfo = "users/{userId}/info/";
         private const string GetHeader = "si/fetch_headers/?challenge_type=signup&guid={0}";
@@ -31,7 +31,7 @@ namespace InstaBot.Console.Manager
         private const string GetTimelineFeed = "feed/timeline/";
         private const string GetExplore = "discover/explore/";
 
-        public UserManager(ConfigurationManager configurationManager) : base(configurationManager)
+        public AccountManager(ConfigurationManager configurationManager) : base(configurationManager)
         {
         }
 

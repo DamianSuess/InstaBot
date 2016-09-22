@@ -30,7 +30,7 @@ namespace InstaBot.Console.Task
         {
             await UserManager.Login();
             await UserManager.SyncFeatures();
-            //await UserManager.AutoCompleteUser();
+            //await AccountManager.AutoCompleteUser();
             await UserManager.TimeLineFeed();
             await UserManager.Explore();
         }

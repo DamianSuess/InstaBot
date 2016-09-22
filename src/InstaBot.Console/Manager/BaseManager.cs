@@ -54,6 +54,15 @@ namespace InstaBot.Console.Manager
             });
             return content;
         }
+
+        public string RankToken
+        {
+            get
+            {
+                return $"{ConfigurationManager.AuthSettings.UserId}_{ConfigurationManager.AuthSettings.Guid}"; 
+                
+            } 
+        }
     }
 
 }

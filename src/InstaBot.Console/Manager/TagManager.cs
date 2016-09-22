@@ -3,16 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using InstaBot.Console.Model;
 
 namespace InstaBot.Console.Manager
 {
-    public class TagManager : BaseManager
+    public interface ITagManager
     {
-        //Ranked token : userid_guid
-        private const string GetTag = "/api/v1/feed/tag/speed/?rank_token={rankToken}&ranked_content={ranked}&";
+        Task<TagResponseMessage> SearchTags(string tag);
+    }
+    public class TagManager : BaseManager, ITagManager
+    {
+        private const string GetSearchTag = "tags/search/?is_typeahead=true&q={0}&rank_token={1}";
 
         public TagManager(ConfigurationManager configurationManager) : base(configurationManager)
         {
         }
+
+        public async Task<TagResponseMessage> SearchTags(string tag)
+        {
+            var tags = await WebApi.GetEntityAsync<TagResponseMessage>(string.Format(GetSearchTag, tag, RankToken));
+            return tags;
+        }
+
     }
 }

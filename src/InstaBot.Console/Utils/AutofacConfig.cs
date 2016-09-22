@@ -21,7 +21,7 @@ namespace InstaBot.Console.Utils
             builder.RegisterInstance(new ConfigurationManager()).As<ConfigurationManager>();
 
             //Manager
-            builder.RegisterAssemblyTypes(typeof(UserManager).Assembly)
+            builder.RegisterAssemblyTypes(typeof(AccountManager).Assembly)
                .Where(t => t.GetInterfaces().Any(i => i.IsAssignableFrom(typeof(IBaseManager))))
                .PropertiesAutowired()
                .AsImplementedInterfaces();

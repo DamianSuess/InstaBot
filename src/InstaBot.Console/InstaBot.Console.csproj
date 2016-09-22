@@ -76,9 +76,11 @@
     <Compile Include="InstaBot.cs" />
     <Compile Include="IntagramException.cs" />
     <Compile Include="Manager\BaseManager.cs" />
+    <Compile Include="Manager\FeedManager.cs" />
+    <Compile Include="Manager\FriendshipsManager.cs" />
     <Compile Include="Manager\MediaManager.cs" />
     <Compile Include="Manager\TagManager.cs" />
-    <Compile Include="Manager\UserManager.cs" />
+    <Compile Include="Manager\AccountManager.cs" />
     <Compile Include="Model\AutoCompleteUserListResponseMessage.cs" />
     <Compile Include="Model\BaseMessage.cs" />
     <Compile Include="Model\BaseResponseMessage.cs" />
@@ -87,6 +89,7 @@
     <Compile Include="Model\LoginMessage.cs" />
     <Compile Include="Model\LoginResponseMessage.cs" />
     <Compile Include="Model\SyncResponseMessage.cs" />
+    <Compile Include="Model\TagResponseMessage.cs" />
     <Compile Include="Model\TimelineFeedResponseMessage.cs" />
     <Compile Include="Model\User.cs" />
     <Compile Include="Program.cs" />
