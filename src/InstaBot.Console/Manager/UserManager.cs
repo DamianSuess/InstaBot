@@ -16,6 +16,9 @@ namespace InstaBot.Console.Manager
     {
         Task<LoginResponseMessage> Login();
         Task<bool> SyncFeatures();
+        Task<AutoCompleteUserListResponseMessage> AutoCompleteUser();
+        Task<TimelineFeedResponseMessage> TimeLineFeed();
+        Task<ExploreResponseMessage> Explore();
     }
 
     public class UserManager : BaseManager, IUserManager
@@ -24,6 +27,9 @@ namespace InstaBot.Console.Manager
         private const string GetHeader = "si/fetch_headers/?challenge_type=signup&guid={0}";
         private const string PostLogin = "accounts/login/";
         private const string GetSync = "qe/sync/";
+        private const string GetAutoCompleteUser = "friendships/autocomplete_user_list/?version=2";
+        private const string GetTimelineFeed = "feed/timeline/";
+        private const string GetExplore = "discover/explore/";
 
         public UserManager(ConfigurationManager configurationManager) : base(configurationManager)
         {
@@ -77,6 +83,23 @@ namespace InstaBot.Console.Manager
 
             var syncEntity = await WebApi.PostEntityAsync<SyncResponseMessage>(GetSync, content);
             return true;
+        }
+        public async Task<AutoCompleteUserListResponseMessage> AutoCompleteUser()
+        {
+            var autoCompleteUserList = await WebApi.GetEntityAsync<AutoCompleteUserListResponseMessage>(GetAutoCompleteUser);
+            return autoCompleteUserList;
+        }
+
+        public async Task<TimelineFeedResponseMessage> TimeLineFeed()
+        {
+            var timelineFeed = await WebApi.GetEntityAsync<TimelineFeedResponseMessage>(GetTimelineFeed);
+            return timelineFeed;
+        }
+
+        public async Task<ExploreResponseMessage> Explore()
+        {
+            var explore = await WebApi.GetEntityAsync<ExploreResponseMessage>(GetExplore);
+            return explore;
         }
 
         private string ExtractToken(HttpResponseMessage response)

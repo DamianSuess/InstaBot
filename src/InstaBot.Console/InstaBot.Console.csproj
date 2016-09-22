@@ -79,11 +79,16 @@
     <Compile Include="Manager\MediaManager.cs" />
     <Compile Include="Manager\TagManager.cs" />
     <Compile Include="Manager\UserManager.cs" />
+    <Compile Include="Model\AutoCompleteUserListResponseMessage.cs" />
     <Compile Include="Model\BaseMessage.cs" />
     <Compile Include="Model\BaseResponseMessage.cs" />
+    <Compile Include="Model\ExploreResponseMessage.cs" />
+    <Compile Include="Model\FriendshipStatus.cs" />
     <Compile Include="Model\LoginMessage.cs" />
     <Compile Include="Model\LoginResponseMessage.cs" />
     <Compile Include="Model\SyncResponseMessage.cs" />
+    <Compile Include="Model\TimelineFeedResponseMessage.cs" />
+    <Compile Include="Model\User.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ConfigurationManager.cs" />
