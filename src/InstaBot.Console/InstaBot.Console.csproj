@@ -84,12 +84,20 @@
     <Compile Include="Model\AutoCompleteUserListResponseMessage.cs" />
     <Compile Include="Model\BaseMessage.cs" />
     <Compile Include="Model\BaseResponseMessage.cs" />
+    <Compile Include="Model\Candidate.cs" />
+    <Compile Include="Model\Caption.cs" />
+    <Compile Include="Model\Comment.cs" />
     <Compile Include="Model\ExploreResponseMessage.cs" />
     <Compile Include="Model\FriendshipStatus.cs" />
+    <Compile Include="Model\Item.cs" />
+    <Compile Include="Model\LikeResponseMessage.cs" />
     <Compile Include="Model\LoginMessage.cs" />
     <Compile Include="Model\LoginResponseMessage.cs" />
     <Compile Include="Model\LogoutResponseMessage.cs" />
+    <Compile Include="Model\Media.cs" />
     <Compile Include="Model\SyncResponseMessage.cs" />
+    <Compile Include="Model\Tag.cs" />
+    <Compile Include="Model\TagFeedResponseMessage.cs" />
     <Compile Include="Model\TagResponseMessage.cs" />
     <Compile Include="Model\TimelineFeedResponseMessage.cs" />
     <Compile Include="Model\User.cs" />
@@ -105,6 +113,7 @@
     <Compile Include="Task\LoginTask.cs" />
     <Compile Include="Utils\AutofacConfig.cs" />
     <Compile Include="Utils\Crypto.cs" />
+    <Compile Include="Utils\TimestampExtension.cs" />
     <Compile Include="Web\BaseApiClient.cs" />
     <Compile Include="Web\InstagramApiClient.cs" />
   </ItemGroup>

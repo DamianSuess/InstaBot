@@ -31,15 +31,9 @@ namespace InstaBot.Console.Manager
         {
             ConfigurationManager = configurationManager;
             InitializeClient();
-            //User agent
-            _headers.Add(new KeyValuePair<string, string>("User-Agent",
-                $"Instagram {ConfigurationManager.ApiSettings.Version} Android ({ConfigurationManager.ApiSettings.AndroidVersion}/{ConfigurationManager.ApiSettings.AndroidRelease}; 320dpi; 720x1280; Xiaomi; HM 1SW; armani; qcom; en_US)"));
-            foreach (var header in _headers)
-            {
-                WebApi.InnerClient.DefaultRequestHeaders.Add(header.Key, header.Value);
-            }
+            InitializeHeader();
         }
-
+        
         private void InitializeClient()
         {
             var uri = new Uri(ConfigurationManager.ApiSettings.Url);
@@ -54,6 +48,16 @@ namespace InstaBot.Console.Manager
             HttpClientHandler handler = new HttpClientHandler();
             handler.CookieContainer = cookies;
             WebApi = new InstagramApiClient(uri, handler);
+        }
+
+        private void InitializeHeader()
+        {
+            _headers.Add(new KeyValuePair<string, string>("User-Agent",
+                $"Instagram {ConfigurationManager.ApiSettings.Version} Android ({ConfigurationManager.ApiSettings.AndroidVersion}/{ConfigurationManager.ApiSettings.AndroidRelease}; 320dpi; 720x1280; Xiaomi; HM 1SW; armani; qcom; en_US)"));
+            foreach (var header in _headers)
+            {
+                WebApi.InnerClient.DefaultRequestHeaders.Add(header.Key, header.Value);
+            }
         }
 
         protected string SignBody(string message)

@@ -44,7 +44,7 @@ namespace InstaBot.Console.Manager
                 {
                     var timeline = await TimeLineFeed();
                     if (!string.IsNullOrWhiteSpace(timeline.Message) && timeline.Message.Equals("login_required"))
-                        Login(true);
+                        await Login(true);
                 }
                 catch (InstagramException ex)
                 {
@@ -53,45 +53,42 @@ namespace InstaBot.Console.Manager
 
                 return null;
             }
-            else
-            {
-                var response = await WebApi.InnerClient.GetAsync(string.Format(GetHeader, Guid.NewGuid().ToString("N")));
+            var response = await WebApi.InnerClient.GetAsync(string.Format(GetHeader, Guid.NewGuid().ToString("N")));
 
-                if (!response.IsSuccessStatusCode)
-                    throw new InstagramException("Couldn't get challenge, check your connection"); ;
-                var csrfToken = ExtractToken(response);
+            if (!response.IsSuccessStatusCode)
+                throw new InstagramException("Couldn't get challenge, check your connection"); ;
+            var csrfToken = ExtractToken(response);
+            if (string.IsNullOrWhiteSpace(csrfToken)) throw new InstagramException("Missing csfrtoken");
+
+            var message =
+                new LoginMessage(csrfToken, ConfigurationManager.AuthSettings.Login,
+                    ConfigurationManager.AuthSettings.Password);
+
+            var content = SignedContent(message.ToString());
+
+            var loginResponse = await WebApi.InnerClient.PostAsync(PostLogin, content);
+            if (!loginResponse.IsSuccessStatusCode) throw new InstagramException(loginResponse.ReasonPhrase);
+
+            var user =
+                JsonConvert.DeserializeObject<LoginResponseMessage>(loginResponse.Content.ReadAsStringAsync().Result);
+            if (user.Status.Equals("ok"))
+            {
+                var reponseCookie =
+                    WebApi.ClientHandler.CookieContainer.GetCookies(new Uri(ConfigurationManager.ApiSettings.Url))
+                        .Cast<Cookie>();
+
+                var token = ExtractToken(loginResponse);
                 if (string.IsNullOrWhiteSpace(csrfToken)) throw new InstagramException("Missing csfrtoken");
 
-                var message =
-                    new LoginMessage(csrfToken, ConfigurationManager.AuthSettings.Login,
-                        ConfigurationManager.AuthSettings.Password);
+                ConfigurationManager.AuthSettings.Guid = Guid.NewGuid().ToString();
+                ConfigurationManager.AuthSettings.Token = token;
+                ConfigurationManager.AuthSettings.UserId = user.LoggedInUser.Id;
+                ConfigurationManager.AuthSettings.Cookies = reponseCookie;
+                ConfigurationManager.AuthSettings.Save();
 
-                var content = SignedContent(message.ToString());
-
-                var loginResponse = await WebApi.InnerClient.PostAsync(PostLogin, content);
-                if (!loginResponse.IsSuccessStatusCode) throw new InstagramException(loginResponse.ReasonPhrase);
-
-                var user =
-                    JsonConvert.DeserializeObject<LoginResponseMessage>(loginResponse.Content.ReadAsStringAsync().Result);
-                if (user.Status.Equals("ok"))
-                {
-                    var reponseCookie =
-                        WebApi.ClientHandler.CookieContainer.GetCookies(new Uri(ConfigurationManager.ApiSettings.Url))
-                            .Cast<Cookie>();
-
-                    var token = ExtractToken(loginResponse);
-                    if (string.IsNullOrWhiteSpace(csrfToken)) throw new InstagramException("Missing csfrtoken");
-
-                    ConfigurationManager.AuthSettings.Guid = Guid.NewGuid().ToString();
-                    ConfigurationManager.AuthSettings.Token = token;
-                    ConfigurationManager.AuthSettings.UserId = user.LoggedInUser.Id;
-                    ConfigurationManager.AuthSettings.Cookies = reponseCookie;
-                    ConfigurationManager.AuthSettings.Save();
-
-                    return user;
-                }
-                return null;
+                return user;
             }
+            return null;
         }
 
         public async Task<bool> Logout()

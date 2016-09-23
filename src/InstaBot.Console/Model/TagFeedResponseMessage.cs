@@ -3,10 +3,12 @@ using Newtonsoft.Json;
 
 namespace InstaBot.Console.Model
 {
-    public class ExploreResponseMessage : BaseResponseMessage
+    public class TagFeedResponseMessage : BaseResponseMessage
     {
         [JsonProperty("num_results")]
         public int CountResult { get; set; }
+        [JsonProperty("ranked_items;")]
+        public bool RankedItems { get; set; }
         [JsonProperty("auto_load_more_enabled")]
         public bool IsAutoLoadMoreEnabled { get; set; }
         [JsonProperty("more_available")]
