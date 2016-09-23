@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
 using InstaBot.Console.Utils;
 using InstaBot.Console.Web;
@@ -28,7 +30,7 @@ namespace InstaBot.Console.Manager
         public BaseManager(ConfigurationManager configurationManager)
         {
             ConfigurationManager = configurationManager;
-            WebApi = new InstagramApiClient(new Uri(ConfigurationManager.ApiSettings.Url), new HttpClientHandler());
+            InitializeClient();
             //User agent
             _headers.Add(new KeyValuePair<string, string>("User-Agent",
                 $"Instagram {ConfigurationManager.ApiSettings.Version} Android ({ConfigurationManager.ApiSettings.AndroidVersion}/{ConfigurationManager.ApiSettings.AndroidRelease}; 320dpi; 720x1280; Xiaomi; HM 1SW; armani; qcom; en_US)"));
@@ -36,6 +38,22 @@ namespace InstaBot.Console.Manager
             {
                 WebApi.InnerClient.DefaultRequestHeaders.Add(header.Key, header.Value);
             }
+        }
+
+        private void InitializeClient()
+        {
+            var uri = new Uri(ConfigurationManager.ApiSettings.Url);
+            CookieContainer cookies = new CookieContainer();
+            if (ConfigurationManager.AuthSettings.Cookies != null && ConfigurationManager.AuthSettings.Cookies.Any())
+            {
+                foreach (var cookie in ConfigurationManager.AuthSettings.Cookies)
+                {
+                    cookies.Add(uri, cookie);
+                }
+            }
+            HttpClientHandler handler = new HttpClientHandler();
+            handler.CookieContainer = cookies;
+            WebApi = new InstagramApiClient(uri, handler);
         }
 
         protected string SignBody(string message)

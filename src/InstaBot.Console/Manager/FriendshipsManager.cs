@@ -4,7 +4,7 @@
     {
 
     }
-    public class FriendshipsManager : BaseManager, IFeedManager
+    public class FriendshipsManager : BaseManager, IFriendshipsManager
     {
         public FriendshipsManager(ConfigurationManager configurationManager) : base(configurationManager)
         {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,5 +14,6 @@ namespace InstaBot.Console.Settings
         public string Guid { get; set; }
         public string UserId { get; set; }
         public string Token { get; set; }
+        public IEnumerable<Cookie> Cookies { get; set; }
     }
 }

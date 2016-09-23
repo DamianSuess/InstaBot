@@ -14,11 +14,11 @@ namespace InstaBot.Console.Manager
 {
     public interface IUserManager
     {
-        Task<LoginResponseMessage> Login();
+        Task<LoginResponseMessage> Login(bool force = false);
+        Task<bool> Logout();
         Task<bool> SyncFeatures();
         Task<AutoCompleteUserListResponseMessage> AutoCompleteUser();
         Task<TimelineFeedResponseMessage> TimeLineFeed();
-        Task<ExploreResponseMessage> Explore();
     }
 
     public class AccountManager : BaseManager, IUserManager
@@ -26,49 +26,80 @@ namespace InstaBot.Console.Manager
         private const string GetInfo = "users/{userId}/info/";
         private const string GetHeader = "si/fetch_headers/?challenge_type=signup&guid={0}";
         private const string PostLogin = "accounts/login/";
+        private const string PostLogout = "accounts/logout/";
         private const string GetSync = "qe/sync/";
         private const string GetAutoCompleteUser = "friendships/autocomplete_user_list/?version=2";
         private const string GetTimelineFeed = "feed/timeline/";
-        private const string GetExplore = "discover/explore/";
 
         public AccountManager(ConfigurationManager configurationManager) : base(configurationManager)
         {
         }
 
-        public async Task<LoginResponseMessage> Login()
+        public async Task<LoginResponseMessage> Login(bool force = false)
         {
-            var response = await WebApi.InnerClient.GetAsync(string.Format(GetHeader, Guid.NewGuid().ToString("N")));
-
-            if (!response.IsSuccessStatusCode)
-                throw new IntagramException("Couldn't get challenge, check your connection");
-
-            var csrfToken = ExtractToken(response);
-            if(string.IsNullOrWhiteSpace(csrfToken)) throw new IntagramException("Missing csfrtoken");
-
-            var message =
-                new LoginMessage(csrfToken, ConfigurationManager.AuthSettings.Login,
-                    ConfigurationManager.AuthSettings.Password);
-
-            var content = SignedContent(message.ToString());
-
-            var loginResponse = await WebApi.InnerClient.PostAsync(PostLogin, content);
-            if (!loginResponse.IsSuccessStatusCode) throw new IntagramException(loginResponse.ReasonPhrase);
-
-            var user= JsonConvert.DeserializeObject<LoginResponseMessage>(loginResponse.Content.ReadAsStringAsync().Result);
-            if (user.Status.Equals("ok"))
+            if (!force && !string.IsNullOrWhiteSpace(ConfigurationManager.AuthSettings.UserId) &&
+                !string.IsNullOrWhiteSpace(ConfigurationManager.AuthSettings.Token))
             {
-                var token = ExtractToken(loginResponse);
-                if (string.IsNullOrWhiteSpace(csrfToken)) throw new IntagramException("Missing csfrtoken");
+                try
+                {
+                    var timeline = await TimeLineFeed();
+                    if (!string.IsNullOrWhiteSpace(timeline.Message) && timeline.Message.Equals("login_required"))
+                        Login(true);
+                }
+                catch (InstagramException ex)
+                {
+                    return await Login(true);
+                }
 
-                ConfigurationManager.AuthSettings.Guid = Guid.NewGuid().ToString();
-                ConfigurationManager.AuthSettings.Token = token;
-                ConfigurationManager.AuthSettings.UserId = user.LoggedInUser.Id;
-                ConfigurationManager.AuthSettings.Save();
-
-                return user;
+                return null;
             }
-            return null;
+            else
+            {
+                var response = await WebApi.InnerClient.GetAsync(string.Format(GetHeader, Guid.NewGuid().ToString("N")));
+
+                if (!response.IsSuccessStatusCode)
+                    throw new InstagramException("Couldn't get challenge, check your connection"); ;
+                var csrfToken = ExtractToken(response);
+                if (string.IsNullOrWhiteSpace(csrfToken)) throw new InstagramException("Missing csfrtoken");
+
+                var message =
+                    new LoginMessage(csrfToken, ConfigurationManager.AuthSettings.Login,
+                        ConfigurationManager.AuthSettings.Password);
+
+                var content = SignedContent(message.ToString());
+
+                var loginResponse = await WebApi.InnerClient.PostAsync(PostLogin, content);
+                if (!loginResponse.IsSuccessStatusCode) throw new InstagramException(loginResponse.ReasonPhrase);
+
+                var user =
+                    JsonConvert.DeserializeObject<LoginResponseMessage>(loginResponse.Content.ReadAsStringAsync().Result);
+                if (user.Status.Equals("ok"))
+                {
+                    var reponseCookie =
+                        WebApi.ClientHandler.CookieContainer.GetCookies(new Uri(ConfigurationManager.ApiSettings.Url))
+                            .Cast<Cookie>();
+
+                    var token = ExtractToken(loginResponse);
+                    if (string.IsNullOrWhiteSpace(csrfToken)) throw new InstagramException("Missing csfrtoken");
+
+                    ConfigurationManager.AuthSettings.Guid = Guid.NewGuid().ToString();
+                    ConfigurationManager.AuthSettings.Token = token;
+                    ConfigurationManager.AuthSettings.UserId = user.LoggedInUser.Id;
+                    ConfigurationManager.AuthSettings.Cookies = reponseCookie;
+                    ConfigurationManager.AuthSettings.Save();
+
+                    return user;
+                }
+                return null;
+            }
         }
+
+        public async Task<bool> Logout()
+        {
+            var logout = await WebApi.GetEntityAsync<LogoutResponseMessage>(PostLogout);
+            return logout.Success;
+        }
+
 
         public async Task<bool> SyncFeatures()
         {
@@ -94,12 +125,6 @@ namespace InstaBot.Console.Manager
         {
             var timelineFeed = await WebApi.GetEntityAsync<TimelineFeedResponseMessage>(GetTimelineFeed);
             return timelineFeed;
-        }
-
-        public async Task<ExploreResponseMessage> Explore()
-        {
-            var explore = await WebApi.GetEntityAsync<ExploreResponseMessage>(GetExplore);
-            return explore;
         }
 
         private string ExtractToken(HttpResponseMessage response)

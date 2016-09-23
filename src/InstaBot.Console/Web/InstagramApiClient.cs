@@ -20,18 +20,18 @@ namespace InstaBot.Console.Web
         public async Task<T> GetEntityAsync<T>(string url) where T : BaseResponseMessage
         {
             var response = await InnerClient.GetAsync(url);
-            if (!response.IsSuccessStatusCode) throw new IntagramException($"Bad response status code: {response.StatusCode}");
+            if (!response.IsSuccessStatusCode) throw new InstagramException($"Bad response status code: {response.StatusCode}");
             var entity = JsonConvert.DeserializeObject<T>(response.Content.ReadAsStringAsync().Result);
-            if (!entity.Status.Equals("ok")) throw new IntagramException(entity.Message);
+            if (!entity.Status.Equals("ok")) throw new InstagramException(entity.Message);
             return entity;
         }
 
         public async Task<T> PostEntityAsync<T>(string url, HttpContent data) where T : BaseResponseMessage
         {
             var response = await InnerClient.PostAsync(url, data);
-            if (!response.IsSuccessStatusCode) throw new IntagramException($"Bad response status code: {response.StatusCode}");
+            if (!response.IsSuccessStatusCode) throw new InstagramException($"Bad response status code: {response.StatusCode}");
             var entity = JsonConvert.DeserializeObject<T>(response.Content.ReadAsStringAsync().Result);
-            if (!entity.Status.Equals("ok")) throw new IntagramException(entity.Message);
+            if (!entity.Status.Equals("ok")) throw new InstagramException(entity.Message);
             return entity;
         }
     }

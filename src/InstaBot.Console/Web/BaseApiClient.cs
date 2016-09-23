@@ -5,6 +5,7 @@ namespace InstaBot.Console.Web
 {
     public interface IApiClient : IDisposable
     {
+        HttpClientHandler ClientHandler { get; }
         HttpClient InnerClient { get; }
     }
 
@@ -12,9 +13,11 @@ namespace InstaBot.Console.Web
     {
         protected BaseApiClient(Uri hostUri, HttpClientHandler clientHandler)
         {
-            InnerClient = new HttpClient(clientHandler) {BaseAddress = hostUri};
+            ClientHandler = clientHandler;
+            InnerClient = new HttpClient(clientHandler) { BaseAddress = hostUri };
         }
 
+        public HttpClientHandler ClientHandler { get; }
         public HttpClient InnerClient { get; }
 
         public void Dispose()

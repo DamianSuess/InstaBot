@@ -74,7 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="InstaBot.cs" />
-    <Compile Include="IntagramException.cs" />
+    <Compile Include="InstagramException.cs" />
     <Compile Include="Manager\BaseManager.cs" />
     <Compile Include="Manager\FeedManager.cs" />
     <Compile Include="Manager\FriendshipsManager.cs" />
@@ -88,6 +88,7 @@
     <Compile Include="Model\FriendshipStatus.cs" />
     <Compile Include="Model\LoginMessage.cs" />
     <Compile Include="Model\LoginResponseMessage.cs" />
+    <Compile Include="Model\LogoutResponseMessage.cs" />
     <Compile Include="Model\SyncResponseMessage.cs" />
     <Compile Include="Model\TagResponseMessage.cs" />
     <Compile Include="Model\TimelineFeedResponseMessage.cs" />

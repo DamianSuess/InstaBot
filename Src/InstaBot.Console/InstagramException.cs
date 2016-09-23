@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace InstaBot.Console
 {
-    public class IntagramException : Exception
+    public class InstagramException : Exception
     {
-        public IntagramException()
+        public InstagramException()
         {
         }
 
-        public IntagramException(string message) : base(message)
+        public InstagramException(string message) : base(message)
         {
         }
     }
