@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using InstaBot.Console.Model;
 
 namespace InstaBot.Console.Manager
@@ -11,6 +7,7 @@ namespace InstaBot.Console.Manager
     {
         Task<TagResponseMessage> SearchTags(string tag);
     }
+
     public class TagManager : BaseManager, ITagManager
     {
         private const string GetSearchTag = "tags/search/?is_typeahead=true&q={0}&rank_token={1}";
@@ -24,6 +21,5 @@ namespace InstaBot.Console.Manager
             var tags = await WebApi.GetEntityAsync<TagResponseMessage>(string.Format(GetSearchTag, tag, RankToken));
             return tags;
         }
-
     }
 }

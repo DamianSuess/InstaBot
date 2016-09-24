@@ -26,6 +26,6 @@ namespace InstaBot.Console.Model
         [JsonProperty("user")]
         public User User { get; set; }
         [JsonProperty("user_id")]
-        public int UserId { get; set; }
+        public long UserId { get; set; }
     }
 }

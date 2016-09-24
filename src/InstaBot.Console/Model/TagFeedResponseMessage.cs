@@ -18,6 +18,6 @@ namespace InstaBot.Console.Model
         [JsonProperty("max_id")]
         public int? MaxId { get; set; }
         [JsonProperty("items")]
-        public List<Item> Items { get; set; }
+        public List<Media> Items { get; set; }
     }
 }
