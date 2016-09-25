@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Threading.Tasks;
 using InstaBot.Console.Model;
 
@@ -14,9 +15,9 @@ namespace InstaBot.Console.Manager
     {
         private const string GetExplore = "discover/explore/";
         //private const string GetTag = "feed/tag/speed/?rank_token={rankToken}&ranked_content={ranked}&";
-        private const string GetTag = "feed/tag/{0}";
+        private const string GetTag = "feed/tag/{0}/";
 
-        public FeedManager(ConfigurationManager configurationManager) : base(configurationManager)
+        public FeedManager(ConfigurationManager configurationManager, IDbConnection session) : base(configurationManager)
         {
         }
 

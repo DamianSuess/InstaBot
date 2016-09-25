@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using InstaBot.Console.Domain;
 using InstaBot.Console.Model;
 using Newtonsoft.Json.Linq;
+using ServiceStack;
+using ServiceStack.OrmLite;
+using ServiceStack.OrmLite.Dapper;
 
 namespace InstaBot.Console.Manager
 {
@@ -18,7 +24,7 @@ namespace InstaBot.Console.Manager
         private const string PostLike = "media/{0}/like/";
         private const string PostUnLike = "media/{0}/unlike/";
 
-        public MediaManager(ConfigurationManager configurationManager) : base(configurationManager)
+        public MediaManager(ConfigurationManager configurationManager, IDbConnection session) : base(configurationManager)
         {
         }
 

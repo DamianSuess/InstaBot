@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -31,7 +32,7 @@ namespace InstaBot.Console.Manager
         private const string GetAutoCompleteUser = "friendships/autocomplete_user_list/?version=2";
         private const string GetTimelineFeed = "feed/timeline/";
 
-        public AccountManager(ConfigurationManager configurationManager) : base(configurationManager)
+        public AccountManager(ConfigurationManager configurationManager, IDbConnection session) : base(configurationManager)
         {
         }
 

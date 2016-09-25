@@ -51,7 +51,7 @@ namespace InstaBot.Console.Model
         [JsonProperty("media_type")]
         public int MediaType { get; set; }
         [JsonProperty("next_max_id")]
-        public long NextMaxId { get; set; }
+        public string NextMaxId { get; set; }
         [JsonProperty("organic_tracking_token")]
         public string OrganicTrackingToken { get; set; } 
         [JsonProperty("original_height")]

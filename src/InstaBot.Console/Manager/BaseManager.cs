@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -33,7 +34,8 @@ namespace InstaBot.Console.Manager
             InitializeClient();
             InitializeHeader();
         }
-        
+
+
         private void InitializeClient()
         {
             var uri = new Uri(ConfigurationManager.ApiSettings.Url);

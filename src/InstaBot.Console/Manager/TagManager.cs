@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Data;
+using System.Threading.Tasks;
 using InstaBot.Console.Model;
 
 namespace InstaBot.Console.Manager
@@ -12,7 +13,7 @@ namespace InstaBot.Console.Manager
     {
         private const string GetSearchTag = "tags/search/?is_typeahead=true&q={0}&rank_token={1}";
 
-        public TagManager(ConfigurationManager configurationManager) : base(configurationManager)
+        public TagManager(ConfigurationManager configurationManager, IDbConnection session) : base(configurationManager)
         {
         }
 

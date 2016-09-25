@@ -13,6 +13,6 @@ namespace InstaBot.Console.Model
         [JsonProperty("more_available")]
         public bool IsMoreAvailable { get; set; }
         [JsonProperty("next_max_id")]
-        public int? NextMaxId { get; set; }
+        public string NextMaxId { get; set; }
     }
 }
