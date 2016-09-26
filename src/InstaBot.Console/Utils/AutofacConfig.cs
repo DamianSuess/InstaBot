@@ -19,7 +19,7 @@ namespace InstaBot.Console.Utils
             var builder = new ContainerBuilder();
 
             //Logger
-            //builder.RegisterModule<LoggerModule>();
+            builder.RegisterModule<LoggerModule>();
             var dbFactory = OrmLiteConfig.GetFactory(path);
             builder.RegisterInstance(dbFactory).As<IDbConnectionFactory>();
             builder.RegisterInstance(OrmLiteConfig.BuildSession(dbFactory)).As<IDbConnection>();

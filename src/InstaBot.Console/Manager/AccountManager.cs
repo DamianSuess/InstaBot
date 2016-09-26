@@ -13,16 +13,19 @@ using Newtonsoft.Json.Linq;
 
 namespace InstaBot.Console.Manager
 {
-    public interface IUserManager
+    public interface IAccountManager
     {
         Task<LoginResponseMessage> Login(bool force = false);
         Task<bool> Logout();
         Task<bool> SyncFeatures();
         Task<AutoCompleteUserListResponseMessage> AutoCompleteUser();
         Task<TimelineFeedResponseMessage> TimeLineFeed();
+        Task<UserInfoResponseMessage> UserInfo(string userid);
+        Task<FollowResponseMessage> Follow(string userid);
+        Task<FollowResponseMessage> UnFollow(string userid);
     }
 
-    public class AccountManager : BaseManager, IUserManager
+    public class AccountManager : BaseManager, IAccountManager
     {
         private const string GetInfo = "users/{userId}/info/";
         private const string GetHeader = "si/fetch_headers/?challenge_type=signup&guid={0}";
@@ -31,6 +34,9 @@ namespace InstaBot.Console.Manager
         private const string GetSync = "qe/sync/";
         private const string GetAutoCompleteUser = "friendships/autocomplete_user_list/?version=2";
         private const string GetTimelineFeed = "feed/timeline/";
+        private const string GetUserinfo = "users/{0}/info/";
+        private const string PostFollow = "friendships/create/{0}/";
+        private const string PostUnFollow = "friendships/destroy/{0}/";
 
         public AccountManager(ConfigurationManager configurationManager, IDbConnection session) : base(configurationManager)
         {
@@ -119,10 +125,44 @@ namespace InstaBot.Console.Manager
             return autoCompleteUserList;
         }
 
+        public async Task<UserInfoResponseMessage> UserInfo(string userid)
+        {
+            var userInfo = await WebApi.GetEntityAsync<UserInfoResponseMessage>(string.Format(GetUserinfo, userid));
+            return userInfo;
+        }
+
         public async Task<TimelineFeedResponseMessage> TimeLineFeed()
         {
             var timelineFeed = await WebApi.GetEntityAsync<TimelineFeedResponseMessage>(GetTimelineFeed);
             return timelineFeed;
+        }
+        
+        public async Task<FollowResponseMessage> Follow(string userId)
+        {
+            dynamic syncMessage = new JObject();
+            syncMessage._uuid = ConfigurationManager.AuthSettings.Guid;
+            syncMessage._uid = ConfigurationManager.AuthSettings.UserId;
+            syncMessage._csrftoken = ConfigurationManager.AuthSettings.Token;
+            syncMessage.user_id = userId;
+
+            var content = SignedContent(syncMessage.ToString());
+
+            var followReponse = await WebApi.PostEntityAsync<FollowResponseMessage>(string.Format(PostFollow, userId), content);
+            return followReponse;
+        }
+
+        public async Task<FollowResponseMessage> UnFollow(string userId)
+        {
+            dynamic syncMessage = new JObject();
+            syncMessage._uuid = ConfigurationManager.AuthSettings.Guid;
+            syncMessage._uid = ConfigurationManager.AuthSettings.UserId;
+            syncMessage._csrftoken = ConfigurationManager.AuthSettings.Token;
+            syncMessage.user_id = userId;
+
+            var content = SignedContent(syncMessage.ToString());
+
+            var followReponse = await WebApi.PostEntityAsync<FollowResponseMessage>(string.Format(PostUnFollow, userId), content);
+            return followReponse;
         }
 
         private string ExtractToken(HttpResponseMessage response)

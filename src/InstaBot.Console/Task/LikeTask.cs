@@ -7,6 +7,7 @@ using InstaBot.Console.Domain;
 using InstaBot.Console.Manager;
 using InstaBot.Console.Model;
 using InstaBot.Console.Utils;
+using InstaBot.Logging;
 using ServiceStack;
 using ServiceStack.OrmLite;
 
@@ -20,15 +21,17 @@ namespace InstaBot.Console.Task
     public class LikeTask : ILikeTask
     {
         protected ConfigurationManager ConfigurationManager;
+        protected ILogger Logger;
         protected IDbConnection Session;
         protected IFeedManager FeedManager;
         protected IMediaManager MediaManager;
         protected ITagManager TagManager;
 
-        public LikeTask(ConfigurationManager configurationManager, IDbConnection session, ITagManager tagManager, IFeedManager feedManager,
+        public LikeTask(ConfigurationManager configurationManager, ILogger logger, IDbConnection session, ITagManager tagManager, IFeedManager feedManager,
             IMediaManager mediaManager)
         {
             ConfigurationManager = configurationManager;
+            Logger = logger;
             Session = session;
             TagManager = tagManager;
             FeedManager = feedManager;
@@ -37,11 +40,15 @@ namespace InstaBot.Console.Task
 
         public async void Start()
         {
+            Logger.Info("Start Like task");
             do
             {
                 var medias = new List<Media>();
                 var tags = ConfigurationManager.BotSettings.Tags;
                 var stopTags = ConfigurationManager.BotSettings.StopTags.Select(x => x.ToUpper()).ToArray();
+                Logger.Trace("Using tags:{0}", string.Join(",", tags));
+                Logger.Trace("Using stop tags:{0}", string.Join(",", stopTags));
+
                 foreach (var tag in tags)
                 {
                     var foundTags = await TagManager.SearchTags(tag);
@@ -67,21 +74,24 @@ namespace InstaBot.Console.Task
                     {
                         var compareHour = DateTime.Now.AddHours(-1);
                         var compareDay = DateTime.Now.AddDays(-1);
-                        do
+                        while (Session.Select<LikedMedia>(x => x.CreationTime > compareHour).Count >
+                               ConfigurationManager.BotSettings.MaxLikePerHour ||
+                               Session.Select<LikedMedia>(x => x.CreationTime > compareDay).Count >
+                               ConfigurationManager.BotSettings.MaxLikePerDay)
                         {
-                            Thread.Sleep(new TimeSpan(0, 0, 1));
-                        } while (Session.Select<LikedMedia>(x => x.CreationTime > compareHour).Count >
-                                 ConfigurationManager.BotSettings.MaxLikePerHour ||
-                                 Session.Select<LikedMedia>(x => x.CreationTime > compareDay).Count >
-                                 ConfigurationManager.BotSettings.MaxLikePerDay);
+                            var waitTime = 1;
+                            Logger.Info($"Too much like, waiting {waitTime}min");
+                            Thread.Sleep(new TimeSpan(0, waitTime, 0));
+                        }
                         await MediaManager.Like(media.Id);
+                        Logger.Info($"Liking media {media.Id}");
                         Session.Insert(new LikedMedia(media.Id));
                     }
                     catch (InstagramException)
                     {
                         continue;
                     }
-                    Thread.Sleep(new TimeSpan(0, 0, 0, 30));
+                    Thread.Sleep(new TimeSpan(0, 0, 30));
                 }
             } while (true);
         }

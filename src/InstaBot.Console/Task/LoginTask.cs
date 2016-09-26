@@ -18,22 +18,22 @@ namespace InstaBot.Console.Task
     public class LoginTask : ILogin
     {
         protected ConfigurationManager ConfigurationManager;
-        protected IUserManager UserManager;
+        protected IAccountManager IAccountManager;
         protected IFeedManager FeedManager;
 
-        public LoginTask(ConfigurationManager configurationManager, IUserManager userManager, IFeedManager feedManager)
+        public LoginTask(ConfigurationManager configurationManager, IAccountManager accountManager, IFeedManager feedManager)
         {
             ConfigurationManager = configurationManager;
-            UserManager = userManager;
+            IAccountManager = accountManager;
             FeedManager = feedManager;
         }
 
         public async void DoLogin()
         {
-            await UserManager.Login();
-            await UserManager.SyncFeatures();
-            //await UserManager.AutoCompleteUser();
-            await UserManager.TimeLineFeed();
+            await IAccountManager.Login();
+            await IAccountManager.SyncFeatures();
+            //await IAccountManager.AutoCompleteUser();
+            await IAccountManager.TimeLineFeed();
             await FeedManager.Explore();
         }
     }

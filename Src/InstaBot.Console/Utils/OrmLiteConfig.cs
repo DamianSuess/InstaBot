@@ -29,6 +29,7 @@ namespace InstaBot.Console.Utils
         {
             var session =  factory.Open();
             session.CreateTableIfNotExists<LikedMedia>();
+            session.CreateTableIfNotExists<FollowedUser>();
             return session;
         }
 

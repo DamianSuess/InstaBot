@@ -22,10 +22,14 @@ namespace InstaBot.Console.Settings
         [DefaultValue(50)]
         public int MaxLikeToLike { get; set; }
         [DefaultValue(350)]
-        public int FollowPerDay { get; set; }
+        public int MaxFollowPerDay { get; set; }
         [DefaultValue(350)]
         public int UnFollowPerDay { get; set; }
         [DefaultValue(350)]
         public int CommentPerDay { get; set; }
+        [DefaultValue(null)]
+        public int? LikeRatio { get; set; }
+        [DefaultValue(0.90)]
+        public double FollowingRatio { get; set; }
     }
 }

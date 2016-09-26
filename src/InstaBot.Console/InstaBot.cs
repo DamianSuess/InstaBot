@@ -15,18 +15,20 @@ namespace InstaBot.Console
     {
         private ILogin _loginTask { get; set; }
         private ILikeTask _likeTask { get; set; }
+        private IFollowingTask _followingTask { get; set; }
 
-        public InstaBot( ILogin loginTask, ILikeTask likeTask)
+        public InstaBot( ILogin loginTask, ILikeTask likeTask, IFollowingTask followingTask)
         {
             _loginTask = loginTask;
             _likeTask = likeTask;
+            _followingTask = followingTask;
         }
 
         public void Run()
         {
             _loginTask.DoLogin();
             _likeTask.Start();
-            System.Console.ReadLine();
+            _followingTask.Start();
         }
     }
 }

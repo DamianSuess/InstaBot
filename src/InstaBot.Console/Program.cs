@@ -7,6 +7,7 @@ using Autofac;
 using InstaBot.Console.Settings;
 using InstaBot.Console.Task;
 using InstaBot.Console.Utils;
+using InstaBot.Logging;
 
 namespace InstaBot.Console
 {
@@ -21,11 +22,14 @@ namespace InstaBot.Console
 
             using (var scope = Container.BeginLifetimeScope())
             {
+                var logger = scope.Resolve<ILogger>();
                 var configurationManager = scope.Resolve<ConfigurationManager>();
                 configurationManager.Load(string.Empty);
                 var bot = scope.Resolve<IInstaBot>();
                 bot.Run();
             }
+
+            System.Console.ReadLine();
         }
     }
 }
