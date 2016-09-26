@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using InstaBot.Console.Model.JSonConverter;
 using Newtonsoft.Json;
 
 namespace InstaBot.Console.Model
@@ -15,7 +16,9 @@ namespace InstaBot.Console.Model
         public string NextMaxId { get; set; }
         [JsonProperty("max_id")]
         public int? MaxId { get; set; }
+
         [JsonProperty("items")]
-        public List<Item> Items { get; set; }
+        [JsonConverter(typeof(JsonItemConverter))]
+        public List<Media> Medias { get; set; }
     }
 }

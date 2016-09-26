@@ -68,11 +68,11 @@ namespace InstaBot.Console.Task
         private async System.Threading.Tasks.Task Follow(string[] stopTags)
         {
             var exploreReponse = await FeedManager.Explore();
-            var medias = exploreReponse.Items.Where(
+            var medias = exploreReponse.Medias.Where(
                 x =>
-                    x.Media.LikeCount >= ConfigurationManager.BotSettings.MinLikeToLike &&
-                    x.Media.LikeCount < ConfigurationManager.BotSettings.MaxLikeToLike && !x.Media.HasLiked &&
-                    (x.Media.Caption == null || !x.Media.Caption.Text.ToUpper().ContainsAny(stopTags)));
+                    x.LikeCount >= ConfigurationManager.BotSettings.MinLikeToLike &&
+                    x.LikeCount < ConfigurationManager.BotSettings.MaxLikeToLike && !x.HasLiked &&
+                    (x.Caption == null || !x.Caption.Text.ToUpper().ContainsAny(stopTags)));
             foreach (var media in medias)
             {
                 var compareDay = DateTime.Now.AddDays(-1);
@@ -84,7 +84,7 @@ namespace InstaBot.Console.Task
                     Thread.Sleep(new TimeSpan(0, waitTime, 0));
                 }
 
-                var user = await AccountManager.UserInfo(media.Media.User.Id);
+                var user = await AccountManager.UserInfo(media.User.Id);
                 Logger.Info($"Get information for user {user.User.Id}");
                 if (Session.Select<FollowedUser>(x => x.Id == user.User.Id).Any()) continue;
 

@@ -118,7 +118,8 @@
     <Compile Include="Model\ExploreResponseMessage.cs" />
     <Compile Include="Model\FollowResponseMessage.cs" />
     <Compile Include="Model\FriendshipStatus.cs" />
-    <Compile Include="Model\Item.cs" />
+    <Compile Include="Model\JSonConverter\JsonCreationConverter.cs" />
+    <Compile Include="Model\JSonConverter\JsonMediaConverter.cs" />
     <Compile Include="Model\LikeResponseMessage.cs" />
     <Compile Include="Model\LoginMessage.cs" />
     <Compile Include="Model\LoginResponseMessage.cs" />
