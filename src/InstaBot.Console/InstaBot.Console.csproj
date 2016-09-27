@@ -143,7 +143,6 @@
     <Compile Include="Task\LikeTask.cs" />
     <Compile Include="Task\CommentTask.cs" />
     <Compile Include="Task\LoginTask.cs" />
-    <Compile Include="TinyMessenger.cs" />
     <Compile Include="Utils\AutofacConfig.cs" />
     <Compile Include="Utils\CollectionExtension.cs" />
     <Compile Include="Utils\Crypto.cs" />
