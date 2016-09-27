@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaBot.Core", "InstaBot.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaBot.Data", "InstaBot.Data\InstaBot.Data.csproj", "{EF4D4091-F503-4C29-BA33-983AEAC882F9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaBot.InstagramAPI", "InstaBot.InstagramAPI\InstaBot.InstagramAPI.csproj", "{07429B0E-DD7E-4B00-930A-564D2C6BB184}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{EF4D4091-F503-4C29-BA33-983AEAC882F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF4D4091-F503-4C29-BA33-983AEAC882F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF4D4091-F503-4C29-BA33-983AEAC882F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07429B0E-DD7E-4B00-930A-564D2C6BB184}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07429B0E-DD7E-4B00-930A-564D2C6BB184}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07429B0E-DD7E-4B00-930A-564D2C6BB184}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07429B0E-DD7E-4B00-930A-564D2C6BB184}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
