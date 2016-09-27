@@ -6,10 +6,12 @@ using System.Threading;
 using InstaBot.Console.Domain;
 using InstaBot.Console.Manager;
 using InstaBot.Console.Model;
+using InstaBot.Console.Model.Event;
 using InstaBot.Console.Utils;
 using InstaBot.Logging;
 using ServiceStack;
 using ServiceStack.OrmLite;
+using TinyMessenger;
 
 namespace InstaBot.Console.Task
 {
@@ -19,22 +21,14 @@ namespace InstaBot.Console.Task
     }
     public class FollowingTask : IFollowingTask
     {
-        protected ConfigurationManager ConfigurationManager;
-        protected ILogger Logger;
-        protected IDbConnection Session;
-        protected IFeedManager FeedManager;
-        protected ITagManager TagManager;
-        protected IAccountManager AccountManager;
+        public ConfigurationManager ConfigurationManager { get; set; }
+        public ITinyMessengerHub MessageHub { get; set; }
+        public ILogger Logger { get; set; }
+        public IDbConnection Session { get; set; }
+        public IFeedManager FeedManager { get; set; }
+        public ITagManager TagManager { get; set; }
+        public IAccountManager AccountManager { get; set; }
 
-        public FollowingTask(ConfigurationManager configurationManager, ILogger logger, IDbConnection session, IAccountManager accountManager, ITagManager tagManager, IFeedManager feedManager)
-        {
-            ConfigurationManager = configurationManager;
-            Logger = logger;
-            Session = session;
-            TagManager = tagManager;
-            FeedManager = feedManager;
-            AccountManager = accountManager;
-        }
 
         public async void Start()
         {

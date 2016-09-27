@@ -115,6 +115,7 @@
     <Compile Include="Model\Candidate.cs" />
     <Compile Include="Model\Caption.cs" />
     <Compile Include="Model\Comment.cs" />
+    <Compile Include="Model\Event\InstagramBaseEvent.cs" />
     <Compile Include="Model\ExploreResponseMessage.cs" />
     <Compile Include="Model\FollowResponseMessage.cs" />
     <Compile Include="Model\FriendshipStatus.cs" />
@@ -144,6 +145,7 @@
     <Compile Include="Task\LikeTask.cs" />
     <Compile Include="Task\CommentTask.cs" />
     <Compile Include="Task\LoginTask.cs" />
+    <Compile Include="TinyMessenger.cs" />
     <Compile Include="Utils\AutofacConfig.cs" />
     <Compile Include="Utils\CollectionExtension.cs" />
     <Compile Include="Utils\Crypto.cs" />
@@ -159,9 +161,15 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\InstaBot.Core\InstaBot.Core.csproj">
+      <Project>{0dfc5b98-e1ef-4871-b8fb-1d23d2fa3888}</Project>
+      <Name>InstaBot.Core</Name>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </ProjectReference>
     <ProjectReference Include="..\InstaBot.Logging\InstaBot.Logging.csproj">
       <Project>{84c256b6-f49f-418b-9746-15b3a9d7d9a7}</Project>
       <Name>InstaBot.Logging</Name>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

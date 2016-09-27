@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text.RegularExpressions;
-using InstaBot.Console.Manager;
-using InstaBot.Console.Model;
-using InstaBot.Console.Utils;
+﻿using InstaBot.Console.Manager;
 
 namespace InstaBot.Console.Task
 {
@@ -17,16 +9,10 @@ namespace InstaBot.Console.Task
 
     public class LoginTask : ILogin
     {
-        protected ConfigurationManager ConfigurationManager;
-        protected IAccountManager IAccountManager;
-        protected IFeedManager FeedManager;
+        protected ConfigurationManager ConfigurationManager { get; set; }
+        protected IAccountManager IAccountManager { get; set; }
+        protected IFeedManager FeedManager { get; set; }
 
-        public LoginTask(ConfigurationManager configurationManager, IAccountManager accountManager, IFeedManager feedManager)
-        {
-            ConfigurationManager = configurationManager;
-            IAccountManager = accountManager;
-            FeedManager = feedManager;
-        }
 
         public async void DoLogin()
         {

@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using InstaBot.Console.Model;
+using InstaBot.Console.Model.Event;
 using InstaBot.Console.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -37,11 +38,7 @@ namespace InstaBot.Console.Manager
         private const string GetUserinfo = "users/{0}/info/";
         private const string PostFollow = "friendships/create/{0}/";
         private const string PostUnFollow = "friendships/destroy/{0}/";
-
-        public AccountManager(ConfigurationManager configurationManager, IDbConnection session) : base(configurationManager)
-        {
-        }
-
+        
         public async Task<LoginResponseMessage> Login(bool force = false)
         {
             if (!force && !string.IsNullOrWhiteSpace(ConfigurationManager.AuthSettings.UserId) &&
@@ -139,6 +136,7 @@ namespace InstaBot.Console.Manager
         
         public async Task<FollowResponseMessage> Follow(string userId)
         {
+            MessageHub.PublishAsync(new BeforeFollowEvent(this));
             dynamic syncMessage = new JObject();
             syncMessage._uuid = ConfigurationManager.AuthSettings.Guid;
             syncMessage._uid = ConfigurationManager.AuthSettings.UserId;
@@ -148,6 +146,8 @@ namespace InstaBot.Console.Manager
             var content = SignedContent(syncMessage.ToString());
 
             var followReponse = await WebApi.PostEntityAsync<FollowResponseMessage>(string.Format(PostFollow, userId), content);
+
+            MessageHub.PublishAsync(new AfterFollowEvent(this));
             return followReponse;
         }
 

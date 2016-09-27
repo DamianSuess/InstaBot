@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using InstaBot.Console.Domain;
 using InstaBot.Console.Model;
+using InstaBot.Console.Model.Event;
 using Newtonsoft.Json.Linq;
 using ServiceStack;
 using ServiceStack.OrmLite;
@@ -23,13 +24,10 @@ namespace InstaBot.Console.Manager
     {
         private const string PostLike = "media/{0}/like/";
         private const string PostUnLike = "media/{0}/unlike/";
-
-        public MediaManager(ConfigurationManager configurationManager, IDbConnection session) : base(configurationManager)
-        {
-        }
-
+        
         public async Task<LikeResponseMessage> Like(string mediaId)
         {
+            MessageHub.PublishAsync(new BeforeLikeEvent(this));
             dynamic syncMessage = new JObject();
             syncMessage._uuid = ConfigurationManager.AuthSettings.Guid;
             syncMessage._uid = ConfigurationManager.AuthSettings.UserId;
@@ -39,6 +37,7 @@ namespace InstaBot.Console.Manager
             var content = SignedContent(syncMessage.ToString());
 
             var likeResponse = await WebApi.PostEntityAsync<LikeResponseMessage>(string.Format(PostLike, mediaId), content);
+            MessageHub.PublishAsync(new AfterLikeEvent(this));
             return likeResponse;
         }
 

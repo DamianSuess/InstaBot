@@ -6,10 +6,6 @@
     }
     public class CommentTask : ICommentTask
     {
-        public CommentTask()
-        {
-        }
-
         public async void Start()
         {
         }

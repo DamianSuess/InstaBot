@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using InstaBot.Console.Utils;
 using InstaBot.Console.Web;
+using TinyMessenger;
 
 namespace InstaBot.Console.Manager
 {
@@ -15,7 +16,10 @@ namespace InstaBot.Console.Manager
 
     public abstract class BaseManager : IBaseManager
     {
-        public IInstagramApiClient WebApi { get; set; }
+        public IInstagramApiClient WebApi { get; private set; }
+        public ITinyMessengerHub MessageHub { get; set; }
+
+        protected ConfigurationManager ConfigurationManager { get; set; }
 
         protected ICollection<KeyValuePair<string, string>> _headers = new List<KeyValuePair<string, string>>(new[]
         {
@@ -26,11 +30,9 @@ namespace InstaBot.Console.Manager
             new KeyValuePair<string, string>("Cookie2", " $Version=1")
         });
 
-        protected ConfigurationManager ConfigurationManager;
 
-        public BaseManager(ConfigurationManager configurationManager)
+        public BaseManager()
         {
-            ConfigurationManager = configurationManager;
             InitializeClient();
             InitializeHeader();
         }

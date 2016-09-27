@@ -31,5 +31,7 @@ namespace InstaBot.Console.Settings
         public int? LikeRatio { get; set; }
         [DefaultValue(0.90)]
         public double FollowingRatio { get; set; }
+        [DefaultValue(true)]
+        public bool LinkedMode { get; set; }
     }
 }

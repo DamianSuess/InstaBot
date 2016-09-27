@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using InstaBot.Console.Task;
+﻿using InstaBot.Console.Task;
 
 namespace InstaBot.Console
 {
@@ -11,24 +6,23 @@ namespace InstaBot.Console
     {
         void Run();
     }
+
     public class InstaBot : IInstaBot
     {
-        private ILogin _loginTask { get; set; }
-        private ILikeTask _likeTask { get; set; }
-        private IFollowingTask _followingTask { get; set; }
+        public ConfigurationManager ConfigurationManager { get; set; }
+        public ILogin LoginTask { get; set; }
+        public ILikeTask LikeTask { get; set; }
+        public IFollowingTask FollowingTask { get; set; }
 
-        public InstaBot( ILogin loginTask, ILikeTask likeTask, IFollowingTask followingTask)
-        {
-            _loginTask = loginTask;
-            _likeTask = likeTask;
-            _followingTask = followingTask;
-        }
 
         public void Run()
         {
-            _loginTask.DoLogin();
-            _likeTask.Start();
-            _followingTask.Start();
+            LoginTask.DoLogin();
+            LikeTask.Start();
+            if (!ConfigurationManager.BotSettings.LinkedMode)
+            {
+                FollowingTask.Start();
+            }
         }
     }
 }

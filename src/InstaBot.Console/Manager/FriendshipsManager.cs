@@ -8,8 +8,6 @@ namespace InstaBot.Console.Manager
     }
     public class FriendshipsManager : BaseManager, IFriendshipsManager
     {
-        public FriendshipsManager(ConfigurationManager configurationManager, IDbConnection session) : base(configurationManager)
-        {
-        }
+
     }
 }

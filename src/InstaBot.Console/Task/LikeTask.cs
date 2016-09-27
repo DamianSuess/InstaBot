@@ -6,6 +6,7 @@ using System.Threading;
 using InstaBot.Console.Domain;
 using InstaBot.Console.Manager;
 using InstaBot.Console.Model;
+using InstaBot.Console.Model.Event;
 using InstaBot.Console.Utils;
 using InstaBot.Logging;
 using ServiceStack;
@@ -20,23 +21,12 @@ namespace InstaBot.Console.Task
 
     public class LikeTask : ILikeTask
     {
-        protected ConfigurationManager ConfigurationManager;
-        protected ILogger Logger;
-        protected IDbConnection Session;
-        protected IFeedManager FeedManager;
-        protected IMediaManager MediaManager;
-        protected ITagManager TagManager;
-
-        public LikeTask(ConfigurationManager configurationManager, ILogger logger, IDbConnection session, ITagManager tagManager, IFeedManager feedManager,
-            IMediaManager mediaManager)
-        {
-            ConfigurationManager = configurationManager;
-            Logger = logger;
-            Session = session;
-            TagManager = tagManager;
-            FeedManager = feedManager;
-            MediaManager = mediaManager;
-        }
+        protected ConfigurationManager ConfigurationManager { get; set; }
+        protected ILogger Logger { get; set; }
+        protected IDbConnection Session { get; set; }
+        protected IFeedManager FeedManager { get; set; }
+        protected IMediaManager MediaManager { get; set; }
+        protected ITagManager TagManager { get; set; }
 
         public async void Start()
         {
@@ -86,6 +76,7 @@ namespace InstaBot.Console.Task
                         await MediaManager.Like(media.Id);
                         Logger.Info($"Liking media {media.Id}");
                         Session.Insert(new LikedMedia(media.Id));
+
                     }
                     catch (InstagramException)
                     {
