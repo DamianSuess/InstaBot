@@ -113,7 +113,6 @@
     <Compile Include="Model\Candidate.cs" />
     <Compile Include="Model\Caption.cs" />
     <Compile Include="Model\Comment.cs" />
-    <Compile Include="Model\Event\InstagramBaseEvent.cs" />
     <Compile Include="Model\ExploreResponseMessage.cs" />
     <Compile Include="Model\FollowResponseMessage.cs" />
     <Compile Include="Model\FriendshipStatus.cs" />

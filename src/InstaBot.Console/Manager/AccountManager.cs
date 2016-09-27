@@ -7,8 +7,7 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using InstaBot.Console.Model;
-using InstaBot.Console.Model.Event;
-using InstaBot.Console.Utils;
+using InstaBot.Core.Event;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -136,7 +135,7 @@ namespace InstaBot.Console.Manager
         
         public async Task<FollowResponseMessage> Follow(string userId)
         {
-            MessageHub.PublishAsync(new BeforeFollowEvent(this));
+            MessageHub.PublishAsync(new BeforeFollowEvent(this, userId));
             dynamic syncMessage = new JObject();
             syncMessage._uuid = ConfigurationManager.AuthSettings.Guid;
             syncMessage._uid = ConfigurationManager.AuthSettings.UserId;
@@ -147,7 +146,7 @@ namespace InstaBot.Console.Manager
 
             var followReponse = await WebApi.PostEntityAsync<FollowResponseMessage>(string.Format(PostFollow, userId), content);
 
-            MessageHub.PublishAsync(new AfterFollowEvent(this));
+            MessageHub.PublishAsync(new AfterFollowEvent(this, userId));
             return followReponse;
         }
 

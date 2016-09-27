@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading;
 using InstaBot.Console.Manager;
 using InstaBot.Console.Model;
-using InstaBot.Console.Model.Event;
 using InstaBot.Console.Utils;
 using InstaBot.Core.Domain;
 using InstaBot.Logging;
@@ -76,7 +75,6 @@ namespace InstaBot.Console.Task
                         await MediaManager.Like(media.Id);
                         Logger.Info($"Liking media {media.Id}");
                         Session.Insert(new LikedMedia(media.Id));
-
                     }
                     catch (InstagramException)
                     {

@@ -1,12 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading;
 using InstaBot.Console.Manager;
-using InstaBot.Console.Model;
-using InstaBot.Console.Model.Event;
-using InstaBot.Console.Utils;
 using InstaBot.Core.Domain;
 using InstaBot.Logging;
 using ServiceStack;
@@ -19,6 +15,7 @@ namespace InstaBot.Console.Task
     {
         void Start();
     }
+
     public class FollowingTask : IFollowingTask
     {
         public ConfigurationManager ConfigurationManager { get; set; }
@@ -42,7 +39,7 @@ namespace InstaBot.Console.Task
             } while (true);
         }
 
-        private  async System.Threading.Tasks.Task UnFollow()
+        private async System.Threading.Tasks.Task UnFollow()
         {
             var compareDate = DateTime.Now.Add(new TimeSpan(-1, 0, 0));
             var unfollowList = Session.Select<FollowedUser>(x => x.FollowTime < compareDate && !x.UnFollowTime.HasValue);
@@ -50,7 +47,8 @@ namespace InstaBot.Console.Task
             {
                 foreach (var followedUser in unfollowList)
                 {
-                    Logger.Info($"UnFollow User {followedUser.Id}, following time was { DateTime.Now.Subtract(followedUser.FollowTime).ToString("g")}");
+                    Logger.Info(
+                        $"UnFollow User {followedUser.Id}, following time was {DateTime.Now.Subtract(followedUser.FollowTime).ToString("g")}");
                     await AccountManager.UnFollow(followedUser.Id);
                     followedUser.UnFollowTime = DateTime.Now;
                     Session.Update(followedUser);
@@ -82,7 +80,7 @@ namespace InstaBot.Console.Task
                 Logger.Info($"Get information for user {user.User.Id}");
                 if (Session.Select<FollowedUser>(x => x.Id == user.User.Id).Any()) continue;
 
-                var followingRatio = Convert.ToDouble(Decimal.Divide(user.User.FollowingCount, user.User.FollowerCount));
+                var followingRatio = Convert.ToDouble(decimal.Divide(user.User.FollowingCount, user.User.FollowerCount));
 
                 if (followingRatio > ConfigurationManager.BotSettings.FollowingRatio)
                 {
@@ -93,11 +91,11 @@ namespace InstaBot.Console.Task
                 }
                 else
                 {
-                    Logger.Info($"Skipped follow User {user.User.Id}, following ratio is {Math.Round(followingRatio, 2)}");
+                    Logger.Info(
+                        $"Skipped follow User {user.User.Id}, following ratio is {Math.Round(followingRatio, 2)}");
                     Thread.Sleep(new TimeSpan(0, 0, 20));
                 }
             }
         }
     }
-
 }

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using InstaBot.Console.Model;
-using InstaBot.Console.Model.Event;
+using InstaBot.Core.Event;
 using Newtonsoft.Json.Linq;
 
 namespace InstaBot.Console.Manager
@@ -18,7 +18,7 @@ namespace InstaBot.Console.Manager
 
         public async Task<LikeResponseMessage> Like(string mediaId)
         {
-            MessageHub.PublishAsync(new BeforeLikeEvent(this));
+            MessageHub.PublishAsync(new BeforeLikeEvent(this, mediaId));
             dynamic syncMessage = new JObject();
             syncMessage._uuid = ConfigurationManager.AuthSettings.Guid;
             syncMessage._uid = ConfigurationManager.AuthSettings.UserId;
@@ -29,7 +29,7 @@ namespace InstaBot.Console.Manager
 
             var likeResponse =
                 await WebApi.PostEntityAsync<LikeResponseMessage>(string.Format(PostLike, mediaId), content);
-            MessageHub.PublishAsync(new AfterLikeEvent(this));
+            MessageHub.PublishAsync(new AfterLikeEvent(this, mediaId));
             return likeResponse;
         }
 
