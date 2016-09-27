@@ -3,16 +3,13 @@ using ServiceStack.DataAnnotations;
 
 namespace InstaBot.Core.Domain
 {
-    public class LikedMedia
+    public class LikedMedia : EntityBase<string>
     {
-        public LikedMedia(string id)
+        public LikedMedia(string id) : base(id)
         {
-            Id = id;
             CreationTime = DateTime.Now;
         }
-
-        [PrimaryKey]
-        public string Id { get; set; }
+        
         public DateTime CreationTime { get; private set; }
     }
 }

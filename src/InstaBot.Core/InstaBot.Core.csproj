@@ -58,6 +58,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain\EntityBase.cs" />
     <Compile Include="Domain\FollowedUser.cs" />
     <Compile Include="Domain\LikedMedia.cs" />
     <Compile Include="Event\AfterFollowEvent.cs" />

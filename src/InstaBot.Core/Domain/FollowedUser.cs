@@ -1,19 +1,15 @@
 ﻿using System;
-using ServiceStack.DataAnnotations;
 
 namespace InstaBot.Core.Domain
 {
-    public class FollowedUser
+    public class FollowedUser : EntityBase<string>
     {
-        public FollowedUser(string id)
+        public FollowedUser(string id) : base(id)
         {
-            Id = id;
             FollowTime = DateTime.Now;
             UnFollowTime = null;
         }
-
-        [PrimaryKey]
-        public string Id { get; set; }
+        
         public DateTime FollowTime { get; private set; }
         public DateTime? UnFollowTime { get; set; }
     }
