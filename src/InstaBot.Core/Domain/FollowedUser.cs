@@ -1,7 +1,7 @@
 ﻿using System;
 using ServiceStack.DataAnnotations;
 
-namespace InstaBot.Console.Domain
+namespace InstaBot.Core.Domain
 {
     public class FollowedUser
     {

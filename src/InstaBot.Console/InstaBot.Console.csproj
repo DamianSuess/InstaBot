@@ -35,8 +35,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autofac, Version=4.1.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <HintPath>..\..\ext\packages\Autofac.4.1.0\lib\net45\Autofac.dll</HintPath>
+    <Reference Include="Autofac, Version=4.1.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\..\Ext\packages\Autofac.4.1.1\lib\net45\Autofac.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Threading.Tasks, Version=1.0.12.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -99,8 +99,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Domain\FollowedUser.cs" />
-    <Compile Include="Domain\LikedMedia.cs" />
     <Compile Include="InstaBot.cs" />
     <Compile Include="InstagramException.cs" />
     <Compile Include="Manager\BaseManager.cs" />
@@ -150,7 +148,6 @@
     <Compile Include="Utils\CollectionExtension.cs" />
     <Compile Include="Utils\Crypto.cs" />
     <Compile Include="Utils\LoggerModule.cs" />
-    <Compile Include="Utils\OrmLiteConfig.cs" />
     <Compile Include="Utils\TimestampExtension.cs" />
     <Compile Include="Web\BaseApiClient.cs" />
     <Compile Include="Web\InstagramApiClient.cs" />
@@ -164,12 +161,17 @@
     <ProjectReference Include="..\InstaBot.Core\InstaBot.Core.csproj">
       <Project>{0dfc5b98-e1ef-4871-b8fb-1d23d2fa3888}</Project>
       <Name>InstaBot.Core</Name>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </ProjectReference>
+    <ProjectReference Include="..\InstaBot.Data\InstaBot.Data.csproj">
+      <Project>{ef4d4091-f503-4c29-ba33-983aeac882f9}</Project>
+      <Name>InstaBot.Data</Name>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </ProjectReference>
     <ProjectReference Include="..\InstaBot.Logging\InstaBot.Logging.csproj">
       <Project>{84c256b6-f49f-418b-9746-15b3a9d7d9a7}</Project>
       <Name>InstaBot.Logging</Name>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

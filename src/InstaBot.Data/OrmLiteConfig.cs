@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using InstaBot.Console.Domain;
+using InstaBot.Core.Domain;
 using ServiceStack;
 using ServiceStack.Data;
 using ServiceStack.OrmLite;
 
-namespace InstaBot.Console.Utils
+namespace InstaBot.Data
 {
     public static class OrmLiteConfig
     {

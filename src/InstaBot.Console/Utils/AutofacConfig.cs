@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Autofac;
 using InstaBot.Console.Manager;
 using InstaBot.Console.Task;
+using InstaBot.Data;
 using ServiceStack.Data;
 using TinyMessenger;
 
@@ -23,9 +24,9 @@ namespace InstaBot.Console.Utils
             builder.RegisterModule<LoggerModule>();
 
             //Data
-            var dbFactory = OrmLiteConfig.GetFactory(path);
-            builder.RegisterInstance(dbFactory).As<IDbConnectionFactory>();
-            builder.RegisterInstance(OrmLiteConfig.BuildSession(dbFactory)).As<IDbConnection>();
+            builder.RegisterModule(new DataModule(path));
+
+            //Configuration
             builder.RegisterInstance(new ConfigurationManager()).As<ConfigurationManager>();
 
             //Manager
