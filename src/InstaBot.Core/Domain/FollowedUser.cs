@@ -10,7 +10,7 @@ namespace InstaBot.Core.Domain
             UnFollowTime = null;
         }
         
-        public DateTime FollowTime { get; private set; }
+        public DateTime FollowTime { get; set; }
         public DateTime? UnFollowTime { get; set; }
     }
 }
