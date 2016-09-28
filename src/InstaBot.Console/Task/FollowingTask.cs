@@ -52,7 +52,7 @@ namespace InstaBot.Console.Task
             do
             {
                 var compareDate = DateTime.Now.Add(new TimeSpan(-3, 0, 0)); //TODO configure time
-                var unfollowList = Session.Select<FollowedUser>(x =>  x.FollowTime > compareDate  && !x.UnFollowTime.HasValue);
+                var unfollowList = Session.Select<FollowedUser>(x => x.FollowTime < compareDate && !x.UnFollowTime.HasValue);
                 if (unfollowList.Any())
                 {
                     foreach (var followedUser in unfollowList)
@@ -95,17 +95,19 @@ namespace InstaBot.Console.Task
                 {
                     if (!exploreQueue.Any())
                         await EnqueueMedia(exploreQueue);
+                    if (!exploreQueue.Any())
+                        continue;
                     currentMedia = exploreQueue.Dequeue();
                 }
-                if(currentMedia == null)
-                    continue;
                 
-
                 var user = await AccountManager.UserInfo(currentMedia.User.Id);
                 Logger.Info($"Get information for user {user.User.Id}");
                 if (Session.Select<FollowedUser>(x => x.Id == user.User.Id).Any()) continue;
 
-                var followingRatio = Convert.ToDouble(decimal.Divide(user.User.FollowingCount, user.User.FollowerCount));
+                double followingRatio;
+                if (user.User.FollowerCount == 0) followingRatio = 1;
+                else
+                    followingRatio = Convert.ToDouble(decimal.Divide(user.User.FollowingCount, user.User.FollowerCount));
 
                 if (followingRatio > ConfigurationManager.BotSettings.FollowingRatio)
                 {
