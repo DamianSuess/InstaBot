@@ -1,9 +1,13 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading;
-using InstaBot.Console.Manager;
 using InstaBot.Core.Domain;
+using InstaBot.InstagramAPI.Domain;
+using InstaBot.InstagramAPI.Event;
+using InstaBot.InstagramAPI.Manager;
 using InstaBot.Logging;
 using ServiceStack;
 using ServiceStack.OrmLite;
@@ -26,17 +30,23 @@ namespace InstaBot.Console.Task
         public ITagManager TagManager { get; set; }
         public IAccountManager AccountManager { get; set; }
 
+        private Queue<Media> _usersQueue = new Queue<Media>();
 
         public async void Start()
         {
-            var stopTags = ConfigurationManager.BotSettings.StopTags.Select(x => x.ToUpper()).ToArray();
-
             Logger.Info("Start Following task");
+            MessageHub.Subscribe<AfterLikeEvent>(LikeMessageReceived);
+
             do
             {
-                await Follow(stopTags);
+                await Follow();
                 await UnFollow();
             } while (true);
+        }
+
+        private void LikeMessageReceived(AfterLikeEvent afterLikeEvent)
+        {
+            _usersQueue.Enqueue(afterLikeEvent.Entity);
         }
 
         private async System.Threading.Tasks.Task UnFollow()
@@ -57,8 +67,9 @@ namespace InstaBot.Console.Task
             }
         }
 
-        private async System.Threading.Tasks.Task Follow(string[] stopTags)
+        private async System.Threading.Tasks.Task Follow()
         {
+            string[] stopTags = ConfigurationManager.BotSettings.StopTags;
             var exploreReponse = await FeedManager.Explore();
             var medias = exploreReponse.Medias.Where(
                 x =>

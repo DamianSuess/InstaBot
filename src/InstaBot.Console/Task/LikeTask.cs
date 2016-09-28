@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading;
-using InstaBot.Console.Manager;
-using InstaBot.Console.Model;
 using InstaBot.Console.Utils;
 using InstaBot.Core.Domain;
+using InstaBot.InstagramAPI;
+using InstaBot.InstagramAPI.Domain;
+using InstaBot.InstagramAPI.Manager;
 using InstaBot.Logging;
 using ServiceStack;
 using ServiceStack.OrmLite;
@@ -20,12 +21,12 @@ namespace InstaBot.Console.Task
 
     public class LikeTask : ILikeTask
     {
-        protected ConfigurationManager ConfigurationManager { get; set; }
-        protected ILogger Logger { get; set; }
-        protected IDbConnection Session { get; set; }
-        protected IFeedManager FeedManager { get; set; }
-        protected IMediaManager MediaManager { get; set; }
-        protected ITagManager TagManager { get; set; }
+        public ConfigurationManager ConfigurationManager { get; set; }
+        public ILogger Logger { get; set; }
+        public IDbConnection Session { get; set; }
+        public IFeedManager FeedManager { get; set; }
+        public IMediaManager MediaManager { get; set; }
+        public ITagManager TagManager { get; set; }
 
         public async void Start()
         {
@@ -72,7 +73,7 @@ namespace InstaBot.Console.Task
                             Logger.Info($"Too much like, waiting {waitTime}min");
                             Thread.Sleep(new TimeSpan(0, waitTime, 0));
                         }
-                        await MediaManager.Like(media.Id);
+                        await MediaManager.Like(media);
                         Logger.Info($"Liking media {media.Id}");
                         Session.Insert(new LikedMedia(media.Id));
                     }

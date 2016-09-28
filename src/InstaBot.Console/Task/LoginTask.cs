@@ -1,4 +1,4 @@
-﻿using InstaBot.Console.Manager;
+﻿using InstaBot.InstagramAPI.Manager;
 
 namespace InstaBot.Console.Task
 {
@@ -9,9 +9,8 @@ namespace InstaBot.Console.Task
 
     public class LoginTask : ILogin
     {
-        protected ConfigurationManager ConfigurationManager { get; set; }
-        protected IAccountManager IAccountManager { get; set; }
-        protected IFeedManager FeedManager { get; set; }
+        public IAccountManager IAccountManager { get; set; }
+        public IFeedManager FeedManager { get; set; }
 
 
         public async void DoLogin()

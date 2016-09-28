@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+using InstaBot.InstagramAPI.Settings;
 
 namespace InstaBot.Console.Settings
 {
-    public class AuthSettings : BaseSettings
+    public class AuthSettings : BaseSettings, IAuthSettings
     {
         public string Login { get; set; }
         public string Password { get; set; }

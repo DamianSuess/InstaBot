@@ -19,10 +19,7 @@ namespace InstaBot.Console
         {
             LoginTask.DoLogin();
             LikeTask.Start();
-            if (!ConfigurationManager.BotSettings.LinkedMode)
-            {
-                FollowingTask.Start();
-            }
+            FollowingTask.Start();
         }
     }
 }
