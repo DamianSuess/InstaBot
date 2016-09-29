@@ -13,6 +13,7 @@ using ServiceStack;
 using ServiceStack.OrmLite;
 using TinyMessenger;
 using System.Threading.Tasks;
+using InstaBot.Data.Repository;
 
 namespace InstaBot.Console.Task
 {
@@ -26,7 +27,7 @@ namespace InstaBot.Console.Task
         public ConfigurationManager ConfigurationManager { get; set; }
         public ITinyMessengerHub MessageHub { get; set; }
         public ILogger Logger { get; set; }
-        public IDbConnection Session { get; set; }
+        public IRepository<FollowedUser> RepositoryFollowedUser { get; set; }
         public IFeedManager FeedManager { get; set; }
         public ITagManager TagManager { get; set; }
         public IAccountManager AccountManager { get; set; }
@@ -52,7 +53,7 @@ namespace InstaBot.Console.Task
             do
             {
                 var compareDate = DateTime.Now.Add(new TimeSpan(-3, 0, 0)); //TODO configure time
-                var unfollowList = Session.Select<FollowedUser>(x => x.FollowTime < compareDate && !x.UnFollowTime.HasValue);
+                var unfollowList = RepositoryFollowedUser.Query<FollowedUser>(x => x.FollowTime < compareDate && !x.UnFollowTime.HasValue);
                 if (unfollowList.Any())
                 {
                     foreach (var followedUser in unfollowList)
@@ -61,7 +62,7 @@ namespace InstaBot.Console.Task
                             $"UnFollow User {followedUser.Id}, following time was {DateTime.Now.Subtract(followedUser.FollowTime).ToString("g")}");
                         await AccountManager.UnFollow(followedUser.Id);
                         followedUser.UnFollowTime = DateTime.Now;
-                        Session.Update(followedUser);
+                        RepositoryFollowedUser.Save(followedUser);
                         Thread.Sleep(new TimeSpan(0, 0, 20));
                     }
                 }
@@ -78,7 +79,7 @@ namespace InstaBot.Console.Task
             do
             {
                 var compareDay = DateTime.Now.AddDays(-1);
-                while (Session.Select<FollowedUser>(x => x.FollowTime > compareDay).Count >
+                while (RepositoryFollowedUser.Query<FollowedUser>(x => x.FollowTime > compareDay).Count() >
                        ConfigurationManager.BotSettings.MaxFollowPerDay)
                 {
                     var waitTime = 5;
@@ -100,7 +101,7 @@ namespace InstaBot.Console.Task
                     currentMedia = exploreQueue.Dequeue();
                 }
                 
-                if (Session.Select<FollowedUser>(x => x.Id == currentMedia.User.Id).Any()) continue;
+                if (RepositoryFollowedUser.Query<FollowedUser>(x => x.Id == currentMedia.User.Id).Any()) continue;
                 Logger.Info($"Get information for user {currentMedia.User.Id}");
                 var user = await AccountManager.UserInfo(currentMedia.User.Id);
 
@@ -112,7 +113,7 @@ namespace InstaBot.Console.Task
                 if (followingRatio > ConfigurationManager.BotSettings.FollowingRatio)
                 {
                     Logger.Info($"Follow User {user.User.Id}, following ratio is {Math.Round(followingRatio, 2)}");
-                    Session.Insert(new FollowedUser(user.User.Id));
+                    RepositoryFollowedUser.Save(new FollowedUser(user.User.Id));
                     await AccountManager.Follow(user.User.Id);
                     Thread.Sleep(new TimeSpan(0, 1, 0));
                 }

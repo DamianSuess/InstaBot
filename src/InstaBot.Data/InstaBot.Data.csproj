@@ -74,9 +74,11 @@
     <Compile Include="DataModule.cs" />
     <Compile Include="OrmLiteConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repository\IRepository.cs" />
-    <Compile Include="Repository\Repository.cs" />
-    <Compile Include="Repository\RepositoryBase.cs" />
+    <Compile Include="Repository\FollowedUserRepository.cs" />
+    <Compile Include="Repository\Base\IRepository.cs" />
+    <Compile Include="Repository\LikedMediaRepository.cs" />
+    <Compile Include="Repository\Base\Repository.cs" />
+    <Compile Include="Repository\Base\AbstractRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

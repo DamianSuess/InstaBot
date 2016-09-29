@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using ServiceStack.OrmLite;
+using ServiceStack.OrmLite.Dapper;
 
 namespace InstaBot.Data.Repository
 {
-    public class Repository<TEntity> : RepositoryBase<TEntity> where TEntity : class
+    public class Repository<TEntity> : AbstractRepository<TEntity>, IDisposable where TEntity : class
     {
-        private IDbConnection _session;
+        private readonly IDbConnection _session;
 
         public Repository(IDbConnection session)
         {
@@ -35,6 +36,11 @@ namespace InstaBot.Data.Repository
             _session.Delete<TEntity>(entity);
         }
 
+        public override IEnumerable<TEntity> Query<TKey>(Func<TEntity, bool> predicate)
+        {
+            return _session.Select<TEntity>().Where(predicate).ToList();
+        }
+
         public override TEntity GetById<TKey>(TKey id)
         {
             return _session.SingleById<TEntity>(id);
@@ -43,6 +49,12 @@ namespace InstaBot.Data.Repository
         public override void Refresh(TEntity entity)
         {
             throw new NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            if(_session != null)
+                _session.Dispose();
         }
     }
 }

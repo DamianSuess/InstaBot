@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using InstaBot.Console.Utils;
 using InstaBot.Core.Domain;
+using InstaBot.Data.Repository;
 using InstaBot.InstagramAPI;
 using InstaBot.InstagramAPI.Domain;
 using InstaBot.InstagramAPI.Manager;
@@ -23,7 +24,7 @@ namespace InstaBot.Console.Task
     {
         public ConfigurationManager ConfigurationManager { get; set; }
         public ILogger Logger { get; set; }
-        public IDbConnection Session { get; set; }
+        public IRepository<LikedMedia> LikedMediaRepository { get; set; }
         public IFeedManager FeedManager { get; set; }
         public IMediaManager MediaManager { get; set; }
         public ITagManager TagManager { get; set; }
@@ -58,15 +59,15 @@ namespace InstaBot.Console.Task
                 medias.Shuffle();
                 foreach (var media in medias)
                 {
-                    if (Session.Select<LikedMedia>(x => x.Id == media.Id).Any()) continue;
+                    if (LikedMediaRepository.GetById(media.Id) != null) continue;
 
                     try
                     {
                         var compareHour = DateTime.Now.AddHours(-1);
                         var compareDay = DateTime.Now.AddDays(-1);
-                        while (Session.Select<LikedMedia>(x => x.CreationTime > compareHour).Count >
+                        while (LikedMediaRepository.Query<LikedMedia>(x => x.CreationTime > compareHour).Count() >
                                ConfigurationManager.BotSettings.MaxLikePerHour ||
-                               Session.Select<LikedMedia>(x => x.CreationTime > compareDay).Count >
+                               LikedMediaRepository.Query<LikedMedia>(x => x.CreationTime > compareDay).Count() >
                                ConfigurationManager.BotSettings.MaxLikePerDay)
                         {
                             var waitTime = 1;
@@ -75,7 +76,7 @@ namespace InstaBot.Console.Task
                         }
                         await MediaManager.Like(media);
                         Logger.Info($"Liking media {media.Id}");
-                        Session.Insert(new LikedMedia(media.Id));
+                        LikedMediaRepository.Save(new LikedMedia(media.Id));
                     }
                     catch (InstagramException)
                     {

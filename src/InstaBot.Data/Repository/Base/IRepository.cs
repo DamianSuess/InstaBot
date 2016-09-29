@@ -9,9 +9,10 @@ namespace InstaBot.Data.Repository
     public interface IRepository<TEntity> where TEntity : class
     {
         TEntity GetById<TKey>(TKey id);
-        void Refresh(TEntity entity);
+        IEnumerable<TEntity> Query<TKey>(Func<TEntity, bool> predicate);
         void Save(TEntity entity);
         void Save(IEnumerable<TEntity> entities);
+        void Refresh(TEntity entity);
         void Delete(TEntity entity);
         void Delete(IEnumerable<TEntity> entities);  
     }
