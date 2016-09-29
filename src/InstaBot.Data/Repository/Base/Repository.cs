@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using ServiceStack.OrmLite;
-using ServiceStack.OrmLite.Dapper;
 
 namespace InstaBot.Data.Repository
 {
