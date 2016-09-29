@@ -100,9 +100,9 @@ namespace InstaBot.Console.Task
                     currentMedia = exploreQueue.Dequeue();
                 }
                 
+                if (Session.Select<FollowedUser>(x => x.Id == currentMedia.User.Id).Any()) continue;
+                Logger.Info($"Get information for user {currentMedia.User.Id}");
                 var user = await AccountManager.UserInfo(currentMedia.User.Id);
-                Logger.Info($"Get information for user {user.User.Id}");
-                if (Session.Select<FollowedUser>(x => x.Id == user.User.Id).Any()) continue;
 
                 double followingRatio;
                 if (user.User.FollowerCount == 0) followingRatio = 1;
