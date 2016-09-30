@@ -1,12 +1,14 @@
-﻿namespace InstaBot.Console.Task
+﻿using System.Threading.Tasks;
+
+namespace InstaBot.Console.Tasks
 {
     public interface ICommentTask
     {
-        void Start();
+        Task Start();
     }
     public class CommentTask : ICommentTask
     {
-        public async void Start()
+        public async Task Start()
         {
         }
     }

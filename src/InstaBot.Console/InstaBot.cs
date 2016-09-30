@@ -1,4 +1,4 @@
-﻿using InstaBot.Console.Task;
+﻿using InstaBot.Console.Tasks;
 
 namespace InstaBot.Console
 {

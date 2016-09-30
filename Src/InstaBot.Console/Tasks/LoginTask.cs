@@ -1,10 +1,11 @@
-﻿using InstaBot.InstagramAPI.Manager;
+﻿using System.Threading.Tasks;
+using InstaBot.InstagramAPI.Manager;
 
-namespace InstaBot.Console.Task
+namespace InstaBot.Console.Tasks
 {
     public interface ILogin : ITask
     {
-        void DoLogin();
+        Task DoLogin();
     }
 
     public class LoginTask : ILogin
@@ -13,7 +14,7 @@ namespace InstaBot.Console.Task
         public IFeedManager FeedManager { get; set; }
 
 
-        public async void DoLogin()
+        public async Task DoLogin()
         {
             await IAccountManager.Login();
             await IAccountManager.SyncFeatures();

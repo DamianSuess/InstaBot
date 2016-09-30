@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Autofac;
-using InstaBot.Console.Task;
+using InstaBot.Console.Tasks;
 using InstaBot.Data;
 using InstaBot.InstagramAPI.Manager;
 using InstaBot.InstagramAPI.Settings;

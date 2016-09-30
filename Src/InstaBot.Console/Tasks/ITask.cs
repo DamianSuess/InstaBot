@@ -1,4 +1,4 @@
-﻿namespace InstaBot.Console.Task
+﻿namespace InstaBot.Console.Tasks
 {
     public interface ITask
     {

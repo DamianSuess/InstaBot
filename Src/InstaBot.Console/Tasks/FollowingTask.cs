@@ -14,12 +14,13 @@ using ServiceStack.OrmLite;
 using TinyMessenger;
 using System.Threading.Tasks;
 using InstaBot.Data.Repository;
+using InstaBot.InstagramAPI;
 
-namespace InstaBot.Console.Task
+namespace InstaBot.Console.Tasks
 {
     public interface IFollowingTask : ITask
     {
-        void Start();
+        Task Start();
     }
 
     public class FollowingTask : IFollowingTask
@@ -34,7 +35,7 @@ namespace InstaBot.Console.Task
 
         private Queue<Media> _usersQueue = new Queue<Media>();
 
-        public async void Start()
+        public async Task Start()
         {
             Logger.Info("Start Following task");
             MessageHub.Subscribe<AfterLikeEvent>(LikeMessageReceived);
@@ -48,7 +49,7 @@ namespace InstaBot.Console.Task
             _usersQueue.Enqueue(afterLikeEvent.Entity);
         }
 
-        private async void UnFollow()
+        private async Task UnFollow()
         {
             do
             {
@@ -63,15 +64,15 @@ namespace InstaBot.Console.Task
                         await AccountManager.UnFollow(followedUser.Id);
                         followedUser.UnFollowTime = DateTime.Now;
                         RepositoryFollowedUser.Save(followedUser);
-                        Thread.Sleep(new TimeSpan(0, 0, 20));
+                        await Task.Delay(new TimeSpan(0, 0, 20));
                     }
                 }
                 //Wait for next check
-                Thread.Sleep(new TimeSpan(0, 10, 0));
+                await Task.Delay(new TimeSpan(0, 10, 0));
             } while (true);
         }
 
-        private async void Follow()
+        private async Task Follow()
         {
             Queue<Media> exploreQueue = new Queue<Media>();
             await EnqueueMedia(exploreQueue);
@@ -84,7 +85,7 @@ namespace InstaBot.Console.Task
                 {
                     var waitTime = 5;
                     Logger.Info($"Too much follow, waiting {waitTime}min");
-                    Thread.Sleep(new TimeSpan(0, waitTime, 0));
+                    await Task.Delay(new TimeSpan(0, waitTime, 0));
                 }
 
                 Media currentMedia = null;
@@ -114,14 +115,23 @@ namespace InstaBot.Console.Task
                 {
                     Logger.Info($"Follow User {user.User.Id}, following ratio is {Math.Round(followingRatio, 2)}");
                     RepositoryFollowedUser.Save(new FollowedUser(user.User.Id));
-                    await AccountManager.Follow(user.User.Id);
-                    Thread.Sleep(new TimeSpan(0, 1, 0));
+                    try
+                    {
+                        await AccountManager.Follow(user.User.Id);
+                    }
+                    catch (InstagramException ex)
+                    {
+                        Logger.Error($"Unable to follow {user.User.Id}, {ex.Message}", ex);
+                        await Task.Delay(new TimeSpan(0, 5, 0));
+                        continue;
+                    }
+                    await Task.Delay(new TimeSpan(0, 5, 0));
                 }
                 else
                 {
                     Logger.Info(
                         $"Skipped follow User {user.User.Id}, following ratio is {Math.Round(followingRatio, 2)}");
-                    Thread.Sleep(new TimeSpan(0, 0, 20));
+                    await Task.Delay(new TimeSpan(0, 0, 20));
                 }
             } while (true);
 

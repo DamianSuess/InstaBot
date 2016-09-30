@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using InstaBot.Console.Utils;
 using InstaBot.Core.Domain;
 using InstaBot.Data.Repository;
@@ -13,11 +14,11 @@ using InstaBot.Logging;
 using ServiceStack;
 using ServiceStack.OrmLite;
 
-namespace InstaBot.Console.Task
+namespace InstaBot.Console.Tasks
 {
     public interface ILikeTask : ITask
     {
-        void Start();
+        Task Start();
     }
 
     public class LikeTask : ILikeTask
@@ -29,7 +30,7 @@ namespace InstaBot.Console.Task
         public IMediaManager MediaManager { get; set; }
         public ITagManager TagManager { get; set; }
 
-        public async void Start()
+        public async Task Start()
         {
             Logger.Info("Start Like task");
             do
@@ -72,7 +73,7 @@ namespace InstaBot.Console.Task
                         {
                             var waitTime = 1;
                             Logger.Info($"Too much like, waiting {waitTime}min");
-                            Thread.Sleep(new TimeSpan(0, waitTime, 0));
+                            await Task.Delay(new TimeSpan(0, waitTime, 0));
                         }
                         await MediaManager.Like(media);
                         Logger.Info($"Liking media {media.Id}");
@@ -82,7 +83,7 @@ namespace InstaBot.Console.Task
                     {
                         continue;
                     }
-                    Thread.Sleep(new TimeSpan(0, 0, 30));
+                    await Task.Delay(new TimeSpan(0, 0, 30));
                 }
             } while (true);
         }
