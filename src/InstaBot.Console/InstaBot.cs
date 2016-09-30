@@ -17,7 +17,7 @@ namespace InstaBot.Console
 
         public void Run()
         {
-            LoginTask.DoLogin();
+            LoginTask.DoLogin().Wait();
             LikeTask.Start();
             FollowingTask.Start();
         }
