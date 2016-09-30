@@ -16,6 +16,7 @@ namespace InstaBot.Console
             using (var scope = Container.BeginLifetimeScope())
             {
                 var logger = scope.Resolve<ILogger>();
+                logger.Trace("### Start IntaBot ###");
                 var bot = scope.Resolve<IInstaBot>();
                 bot.Run();
             }

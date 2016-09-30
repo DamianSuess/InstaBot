@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Linq.Expressions;
 using ServiceStack.OrmLite;
 
 namespace InstaBot.Data.Repository
@@ -17,12 +18,12 @@ namespace InstaBot.Data.Repository
 
         public override void Delete(IEnumerable<TEntity> entities)
         {
-            _session.Delete<TEntity>(entities.ToArray());
+            _session.DeleteAll<TEntity>(entities);
         }
 
         public override void Save(IEnumerable<TEntity> entities)
         {
-            _session.Save<TEntity>(entities.ToArray());
+            _session.SaveAll<TEntity>(entities);
         }
 
         public override void Save(TEntity entity)
@@ -35,9 +36,9 @@ namespace InstaBot.Data.Repository
             _session.Delete<TEntity>(entity);
         }
 
-        public override IEnumerable<TEntity> Query<TKey>(Func<TEntity, bool> predicate)
+        public override IEnumerable<TEntity> Query<TKey>(Expression<System.Func<TEntity, bool>> predicate)
         {
-            return _session.Select<TEntity>().Where(predicate).ToList();
+            return _session.Select<TEntity>(predicate).ToList();
         }
 
         public override TEntity GetById<TKey>(TKey id)
@@ -52,8 +53,8 @@ namespace InstaBot.Data.Repository
 
         public void Dispose()
         {
-            if(_session != null)
-                _session.Dispose();
+            //if(_session != null)
+               // _session.Dispose();
         }
     }
 }
