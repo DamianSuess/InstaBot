@@ -1,20 +1,16 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using System.Threading;
+using System.Threading.Tasks;
 using InstaBot.Core.Domain;
+using InstaBot.Data.Repository;
+using InstaBot.InstagramAPI;
 using InstaBot.InstagramAPI.Domain;
 using InstaBot.InstagramAPI.Event;
 using InstaBot.InstagramAPI.Manager;
 using InstaBot.Logging;
 using ServiceStack;
-using ServiceStack.OrmLite;
 using TinyMessenger;
-using System.Threading.Tasks;
-using InstaBot.Data.Repository;
-using InstaBot.InstagramAPI;
 
 namespace InstaBot.Console.Tasks
 {
@@ -25,6 +21,7 @@ namespace InstaBot.Console.Tasks
 
     public class FollowingTask : IFollowingTask
     {
+        private readonly Queue<Media> _usersQueue = new Queue<Media>();
         public ConfigurationManager ConfigurationManager { get; set; }
         public ITinyMessengerHub MessageHub { get; set; }
         public ILogger Logger { get; set; }
@@ -32,8 +29,6 @@ namespace InstaBot.Console.Tasks
         public IFeedManager FeedManager { get; set; }
         public ITagManager TagManager { get; set; }
         public IAccountManager AccountManager { get; set; }
-
-        private Queue<Media> _usersQueue = new Queue<Media>();
 
         public async Task Start()
         {
@@ -53,35 +48,46 @@ namespace InstaBot.Console.Tasks
         {
             do
             {
-                var compareDate = DateTime.Now.Add(new TimeSpan(-3, 0, 0)); //TODO configure time
-                var unfollowList = RepositoryFollowedUser.Query<FollowedUser>(x => x.FollowTime < compareDate && !x.UnFollowTime.HasValue);
+                var compareDate = DateTime.Now.Add(new TimeSpan(-6, 0, 0)); //TODO configure time
+                var unfollowList =
+                    RepositoryFollowedUser.Query<FollowedUser>(
+                        x => x.FollowTime < compareDate && !x.UnFollowTime.HasValue);
                 if (unfollowList.Any())
                 {
                     foreach (var followedUser in unfollowList)
                     {
-                        Logger.Info(
-                            $"UnFollow User {followedUser.Id}, following time was {DateTime.Now.Subtract(followedUser.FollowTime).ToString("g")}");
-                        await AccountManager.UnFollow(followedUser.Id);
+                        Logger.Info($"UnFollow User {followedUser.Id}, following time was {DateTime.Now.Subtract(followedUser.FollowTime).ToString("g")}");
+                        try
+                        {
+                            await AccountManager.UnFollow(followedUser.Id);
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Critical($"Critical error on unfollowing user {followedUser.Id}", ex);
+                            continue;
+                        }
                         followedUser.UnFollowTime = DateTime.Now;
                         RepositoryFollowedUser.Save(followedUser);
                         await Task.Delay(new TimeSpan(0, 0, 20));
                     }
                 }
                 //Wait for next check
+                Logger.Trace($"Next unfollow Check in {10}mins");
                 await Task.Delay(new TimeSpan(0, 10, 0));
             } while (true);
         }
 
         private async Task Follow()
         {
-            Queue<Media> exploreQueue = new Queue<Media>();
+            var exploreQueue = new Queue<Media>();
             await EnqueueMedia(exploreQueue);
 
             do
             {
                 var compareDay = DateTime.Now.AddDays(-1);
-                while (RepositoryFollowedUser.Query<FollowedUser>(x => x.FollowTime > compareDay).Count() >
-                       ConfigurationManager.BotSettings.MaxFollowPerDay)
+                var dailyFollow = RepositoryFollowedUser.Query<FollowedUser>(x => x.FollowTime > compareDay).Count();
+                Logger.Trace($"{dailyFollow} follow since {compareDay}");
+                while (dailyFollow > ConfigurationManager.BotSettings.MaxFollowPerDay)
                 {
                     var waitTime = 5;
                     Logger.Info($"Too much follow, waiting {waitTime}min");
@@ -92,19 +98,33 @@ namespace InstaBot.Console.Tasks
                 if (_usersQueue.Any())
                 {
                     currentMedia = _usersQueue.Dequeue();
+                    Logger.Trace($"Dequeue from medias");
                 }
                 else
                 {
                     if (!exploreQueue.Any())
                         await EnqueueMedia(exploreQueue);
                     if (!exploreQueue.Any())
+                    {
+                        Logger.Trace($"No media in explore queue");
                         continue;
+                    }
                     currentMedia = exploreQueue.Dequeue();
+                    Logger.Trace($"Dequeue media id {currentMedia.Id} from explore queue");
                 }
-                
+
                 if (RepositoryFollowedUser.Query<FollowedUser>(x => x.Id == currentMedia.User.Id).Any()) continue;
                 Logger.Info($"Get information for user {currentMedia.User.Id}");
-                var user = await AccountManager.UserInfo(currentMedia.User.Id);
+                UserInfoResponseMessage user;
+                try
+                {
+                    user = await AccountManager.UserInfo(currentMedia.User.Id);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Critical($"Critical error on fetching user {currentMedia.User.Id} informations", ex);
+                    continue;
+                }
 
                 double followingRatio;
                 if (user.User.FollowerCount == 0) followingRatio = 1;
@@ -121,26 +141,40 @@ namespace InstaBot.Console.Tasks
                     }
                     catch (InstagramException ex)
                     {
-                        Logger.Error($"Unable to follow {user.User.Id}, {ex.Message}", ex);
-                        await Task.Delay(new TimeSpan(0, 5, 0));
+                        Logger.Error($"Unable to follow {user.User.Id}, {ex}", ex);
+                        await Task.Delay(new TimeSpan(0, 2, 30));
                         continue;
                     }
-                    await Task.Delay(new TimeSpan(0, 5, 0));
+                    catch (Exception ex)
+                    {
+                        Logger.Error($"Fatal erreur to follow {user.User.Id}, {ex}", ex);
+                    }
+                    await Task.Delay(new TimeSpan(0, 2, 30));
                 }
                 else
                 {
                     Logger.Info(
                         $"Skipped follow User {user.User.Id}, following ratio is {Math.Round(followingRatio, 2)}");
-                    await Task.Delay(new TimeSpan(0, 0, 20));
+                    await Task.Delay(new TimeSpan(0, 0, 10));
                 }
             } while (true);
-
         }
 
-        private async Task<bool> EnqueueMedia(Queue<Media> medias)
+        private async Task EnqueueMedia(Queue<Media> medias)
         {
-            string[] stopTags = ConfigurationManager.BotSettings.StopTags;
-            var exploreReponse = await FeedManager.Explore();
+            Logger.Trace($"Adding medias to explore queue");
+            var stopTags = ConfigurationManager.BotSettings.StopTags;
+
+            ExploreResponseMessage exploreReponse;
+            try
+            {
+                exploreReponse = await FeedManager.Explore();
+            }
+            catch (Exception ex)
+            {
+                Logger.Critical($"Critical error on adding medias to explore queue", ex);
+                return;
+            }
             foreach (var media in exploreReponse.Medias.Where(
                 x =>
                     x.LikeCount >= ConfigurationManager.BotSettings.MinLikeToLike &&
@@ -149,8 +183,6 @@ namespace InstaBot.Console.Tasks
             {
                 medias.Enqueue(media);
             }
-
-            return true;
         }
     }
 }
