@@ -9,7 +9,7 @@ namespace InstaBot.Console.Utils
         {
             base.Load(builder);
 
-            LogManager.UseConsole();
+            //LogManager.UseConsole();
             builder.RegisterInstance(LogManager.GetLogger("InstaBot")).As<ILogger>();
         }
     }
