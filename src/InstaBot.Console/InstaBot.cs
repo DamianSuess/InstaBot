@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using InstaBot.Console.Tasks;
 using InstaBot.Logging;
 
@@ -16,15 +17,25 @@ namespace InstaBot.Console
         public ILogin LoginTask { get; set; }
         public ILikeTask LikeTask { get; set; }
         public IFollowingTask FollowingTask { get; set; }
-            
+
 
         public void Run()
         {
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
-
+            CheckConfiguration();
             LoginTask.DoLogin().Wait();
             LikeTask.Start();
             FollowingTask.Start();
+        }
+
+        private void CheckConfiguration()
+        {
+            if (!ConfigurationManager.IsAuthValid)
+            {
+                var message = "Please configure auth.json";
+                Logger.Critical(message);
+                throw new Exception(message);
+            }
         }
 
         private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)

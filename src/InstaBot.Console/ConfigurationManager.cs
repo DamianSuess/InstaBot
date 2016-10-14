@@ -48,5 +48,11 @@ namespace InstaBot.Console
         public IApiSettings ApiSettings { get { return _apiSettings; } }
         public BotSettings BotSettings { get { return _botSettings; } }
 
+
+        public bool IsAuthValid { get
+        {
+            return (!string.IsNullOrWhiteSpace(_authSettings.UserId) &&
+                    !string.IsNullOrWhiteSpace(_authSettings.Token)) || (!string.IsNullOrWhiteSpace(_authSettings.Login) && !string.IsNullOrWhiteSpace(_authSettings.Password));
+        } }
     }
 }
