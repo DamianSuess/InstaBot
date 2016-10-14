@@ -31,12 +31,11 @@ namespace InstaBot.InstagramAPI.Manager
             _apiSettings = apiSettings;
             _authSettings = authSettings;
             InitializeClient();
-            InitializeHeader();
         }
 
-        public IInstagramApiClient WebApi { get; private set; }
+        public static IInstagramApiClient WebApi { get; private set; }
         public ITinyMessengerHub MessageHub { get; set; }
-        protected IApiSettings _apiSettings { get;  set; }
+        protected IApiSettings _apiSettings { get; set; }
         protected IAuthSettings _authSettings { get; set; }
 
         public string RankToken
@@ -48,6 +47,15 @@ namespace InstaBot.InstagramAPI.Manager
         private void InitializeClient()
         {
             var uri = new Uri(_apiSettings.Url);
+            var handler = new HttpClientHandler();
+            _headers.Add(new KeyValuePair<string, string>("User-Agent",
+               $"Instagram {_apiSettings.Version} Android ({_apiSettings.AndroidVersion}/{_apiSettings.AndroidRelease}; 320dpi; 720x1280; Xiaomi; HM 1SW; armani; qcom; en_US)"));
+            WebApi = new InstagramApiClient(uri, handler) { Headers = _headers };
+        }
+
+        public void UpdateAuth()
+        {
+            var uri = new Uri(_apiSettings.Url);
             var cookies = new CookieContainer();
             if (_authSettings.Cookies != null && _authSettings.Cookies.Any())
             {
@@ -56,19 +64,12 @@ namespace InstaBot.InstagramAPI.Manager
                     cookies.Add(uri, cookie);
                 }
             }
+            
             var handler = new HttpClientHandler();
-            handler.CookieContainer = cookies;
-            WebApi = new InstagramApiClient(uri, handler);
-        }
-
-        private void InitializeHeader()
-        {
             _headers.Add(new KeyValuePair<string, string>("User-Agent",
-                $"Instagram {_apiSettings.Version} Android ({_apiSettings.AndroidVersion}/{_apiSettings.AndroidRelease}; 320dpi; 720x1280; Xiaomi; HM 1SW; armani; qcom; en_US)"));
-            foreach (var header in _headers)
-            {
-                WebApi.InnerClient.DefaultRequestHeaders.Add(header.Key, header.Value);
-            }
+               $"Instagram {_apiSettings.Version} Android ({_apiSettings.AndroidVersion}/{_apiSettings.AndroidRelease}; 320dpi; 720x1280; Xiaomi; HM 1SW; armani; qcom; en_US)"));
+            handler.CookieContainer = cookies;
+            WebApi = new InstagramApiClient(uri, handler) { Headers = _headers };
         }
 
         protected string SignBody(string message)

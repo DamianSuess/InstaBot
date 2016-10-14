@@ -73,7 +73,7 @@ namespace InstaBot.InstagramAPI.Manager
 
             var content = SignedContent(message.ToString());
 
-            var loginResponse = await WebApi.InnerClient.PostAsync(PostLogin, content);
+            var loginResponse = await WebApi.PostLoginAsync(PostLogin, content);
             if (!loginResponse.IsSuccessStatusCode) throw new InstagramException(loginResponse.ReasonPhrase);
 
             var user =
@@ -92,6 +92,7 @@ namespace InstaBot.InstagramAPI.Manager
                 _authSettings.UserId = user.LoggedInUser.Id;
                 _authSettings.Cookies = reponseCookie;
                 _authSettings.Save();
+                UpdateAuth();
 
                 return user;
             }

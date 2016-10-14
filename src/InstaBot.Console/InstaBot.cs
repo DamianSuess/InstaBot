@@ -22,7 +22,7 @@ namespace InstaBot.Console
         {
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 
-            LoginTask.DoLogin();
+            LoginTask.DoLogin().Wait();
             LikeTask.Start();
             FollowingTask.Start();
         }
