@@ -11,7 +11,7 @@ namespace InstaBot.Console
         //https://github.com/mgp25/Instagram-API/tree/master/src
         private static void Main(string[] args)
         {
-            Container = AutofacConfig.ConfigureContainer(string.Empty);
+            Container = AutofacConfig.ConfigureContainer(!string.IsNullOrWhiteSpace(args[0]) ? args[0] : string.Empty);
 
             using (var scope = Container.BeginLifetimeScope())
             {
