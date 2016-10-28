@@ -11,13 +11,16 @@ config auth with you login and password<br/>
 <br/>
 <h2><a name="features">Features</a></h2>
  - [Login]
+ - [Like] by tags
+    Possibility to exclude tags
+    Like / hour / day
+ - [Follow]
+    Possibility to set follower/following ratio
  
 <br/>
 <h2><a name="features">Road map</a></h2>
- - Configure include and exclude tags
- - Like / hour / day
- - Like per follower/following ratio
  - Comment
+ - Schedule upload
 
 
 <br/>

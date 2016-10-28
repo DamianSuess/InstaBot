@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{07429B0E-DD7E-4B00-930A-564D2C6BB184}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>InstaBot.InstagramAPI</RootNamespace>
+    <AssemblyName>InstaBot.InstagramAPI</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\Ext\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Settings\IApiSettings.cs" />
+    <Compile Include="Domain\AutoCompleteUserListResponseMessage.cs" />
+    <Compile Include="Domain\BaseMessage.cs" />
+    <Compile Include="Domain\BaseResponseMessage.cs" />
+    <Compile Include="Domain\Candidate.cs" />
+    <Compile Include="Domain\Caption.cs" />
+    <Compile Include="Domain\Comment.cs" />
+    <Compile Include="Domain\ExploreResponseMessage.cs" />
+    <Compile Include="Domain\FollowResponseMessage.cs" />
+    <Compile Include="Domain\FriendshipStatus.cs" />
+    <Compile Include="Domain\JSonConverter\JsonCreationConverter.cs" />
+    <Compile Include="Domain\JSonConverter\JsonMediaConverter.cs" />
+    <Compile Include="Domain\LikeResponseMessage.cs" />
+    <Compile Include="Domain\LoginMessage.cs" />
+    <Compile Include="Domain\LoginResponseMessage.cs" />
+    <Compile Include="Domain\LogoutResponseMessage.cs" />
+    <Compile Include="Domain\Media.cs" />
+    <Compile Include="Domain\SyncResponseMessage.cs" />
+    <Compile Include="Domain\Tag.cs" />
+    <Compile Include="Domain\TagFeedResponseMessage.cs" />
+    <Compile Include="Domain\TagResponseMessage.cs" />
+    <Compile Include="Domain\TimelineFeedResponseMessage.cs" />
+    <Compile Include="Domain\User.cs" />
+    <Compile Include="Domain\UserInfoResponseMessage.cs" />
+    <Compile Include="Event\AfterFollowEvent.cs" />
+    <Compile Include="Event\AfterLikeEvent.cs" />
+    <Compile Include="Event\BeforeFollowEvent.cs" />
+    <Compile Include="Event\BeforeLikeEvent.cs" />
+    <Compile Include="Event\InstagramBaseEvent.cs" />
+    <Compile Include="InstagramException.cs" />
+    <Compile Include="Manager\AccountManager.cs" />
+    <Compile Include="Manager\BaseManager.cs" />
+    <Compile Include="Manager\FeedManager.cs" />
+    <Compile Include="Manager\FriendshipsManager.cs" />
+    <Compile Include="Manager\MediaManager.cs" />
+    <Compile Include="Manager\TagManager.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings\IAuthSettings.cs" />
+    <Compile Include="Utils\Crypto.cs" />
+    <Compile Include="Web\BaseApiClient.cs" />
+    <Compile Include="Web\InstagramApiClient.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\InstaBot.Core\InstaBot.Core.csproj">
+      <Project>{0dfc5b98-e1ef-4871-b8fb-1d23d2fa3888}</Project>
+      <Name>InstaBot.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

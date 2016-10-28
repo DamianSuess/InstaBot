@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaBot.Console", "InstaBot.Console\InstaBot.Console.csproj", "{67FCC234-1EF7-4984-95ED-69656B169E31}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaBot.Tests", "InstaBot.Tests\InstaBot.Tests.csproj", "{2067E1D7-D875-43C1-9149-F9B34F7AC07E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaBot.Logging", "InstaBot.Logging\InstaBot.Logging.csproj", "{84C256B6-F49F-418B-9746-15B3A9D7D9A7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaBot.Core", "InstaBot.Core\InstaBot.Core.csproj", "{0DFC5B98-E1EF-4871-B8FB-1D23D2FA3888}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaBot.Data", "InstaBot.Data\InstaBot.Data.csproj", "{EF4D4091-F503-4C29-BA33-983AEAC882F9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaBot.InstagramAPI", "InstaBot.InstagramAPI\InstaBot.InstagramAPI.csproj", "{07429B0E-DD7E-4B00-930A-564D2C6BB184}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{67FCC234-1EF7-4984-95ED-69656B169E31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67FCC234-1EF7-4984-95ED-69656B169E31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67FCC234-1EF7-4984-95ED-69656B169E31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67FCC234-1EF7-4984-95ED-69656B169E31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2067E1D7-D875-43C1-9149-F9B34F7AC07E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2067E1D7-D875-43C1-9149-F9B34F7AC07E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2067E1D7-D875-43C1-9149-F9B34F7AC07E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2067E1D7-D875-43C1-9149-F9B34F7AC07E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84C256B6-F49F-418B-9746-15B3A9D7D9A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84C256B6-F49F-418B-9746-15B3A9D7D9A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84C256B6-F49F-418B-9746-15B3A9D7D9A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84C256B6-F49F-418B-9746-15B3A9D7D9A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DFC5B98-E1EF-4871-B8FB-1D23D2FA3888}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DFC5B98-E1EF-4871-B8FB-1D23D2FA3888}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DFC5B98-E1EF-4871-B8FB-1D23D2FA3888}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DFC5B98-E1EF-4871-B8FB-1D23D2FA3888}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF4D4091-F503-4C29-BA33-983AEAC882F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF4D4091-F503-4C29-BA33-983AEAC882F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF4D4091-F503-4C29-BA33-983AEAC882F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF4D4091-F503-4C29-BA33-983AEAC882F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07429B0E-DD7E-4B00-930A-564D2C6BB184}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07429B0E-DD7E-4B00-930A-564D2C6BB184}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07429B0E-DD7E-4B00-930A-564D2C6BB184}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07429B0E-DD7E-4B00-930A-564D2C6BB184}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

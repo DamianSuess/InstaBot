@@ -4,12 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace InstaBot.Console
+namespace InstaBot.Logging
 {
-    class Program
+    public interface ILogger
     {
-        static void Main(string[] args)
-        {
-        }
+        void Log(LogLevel level, string msg, params object[] args);
     }
 }
