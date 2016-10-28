@@ -41,6 +41,7 @@ namespace InstaBot.Console
         private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
         {
             Logger.Critical("Fatal error occured in task", e.Exception);
+            throw new Exception("Fatal error occured in sub task", e.Exception);
         }
     }
 }

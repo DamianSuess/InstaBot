@@ -142,20 +142,20 @@ namespace InstaBot.Console.Tasks
                     catch (InstagramException ex)
                     {
                         Logger.Error($"Unable to follow {user.User.Id}, {ex}", ex);
-                        await Task.Delay(new TimeSpan(0, 2, 30));
+                        await Task.Delay(new TimeSpan(0, 1, 30));
                         continue;
                     }
                     catch (Exception ex)
                     {
                         Logger.Error($"Fatal erreur to follow {user.User.Id}, {ex}", ex);
                     }
-                    await Task.Delay(new TimeSpan(0, 2, 30));
+                    await Task.Delay(new TimeSpan(0, 1, 30));
                 }
                 else
                 {
                     Logger.Info(
                         $"Skipped follow User {user.User.Id}, following ratio is {Math.Round(followingRatio, 2)}");
-                    await Task.Delay(new TimeSpan(0, 0, 10));
+                    await Task.Delay(new TimeSpan(0, 0, 5));
                 }
             } while (true);
         }
