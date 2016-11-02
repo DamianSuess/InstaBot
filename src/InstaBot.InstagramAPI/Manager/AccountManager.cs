@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using InstaBot.InstagramAPI.Domain;
 using InstaBot.InstagramAPI.Event;
@@ -16,13 +17,17 @@ namespace InstaBot.InstagramAPI.Manager
     public interface IAccountManager : IBaseManager
     {
         Task<LoginResponseMessage> Login(bool force = false);
+        Task<LoginResponseMessage> Login(CancellationToken token, bool force = false);
         Task<bool> Logout();
+        Task<bool> Logout(CancellationToken token);
         Task<bool> SyncFeatures();
+        Task<bool> SyncFeatures(CancellationToken token);
         Task<AutoCompleteUserListResponseMessage> AutoCompleteUser();
+        Task<AutoCompleteUserListResponseMessage> AutoCompleteUser(CancellationToken token);
         Task<TimelineFeedResponseMessage> TimeLineFeed();
+        Task<TimelineFeedResponseMessage> TimeLineFeed(CancellationToken token);
         Task<UserInfoResponseMessage> UserInfo(string userid);
-        Task<FollowResponseMessage> Follow(string userid);
-        Task<FollowResponseMessage> UnFollow(string userid);
+        Task<UserInfoResponseMessage> UserInfo(string userid, CancellationToken token);
     }
 
     public class AccountManager : BaseManager, IAccountManager
@@ -35,8 +40,6 @@ namespace InstaBot.InstagramAPI.Manager
         private const string GetAutoCompleteUser = "friendships/autocomplete_user_list/?version=2";
         private const string GetTimelineFeed = "feed/timeline/";
         private const string GetUserinfo = "users/{0}/info/";
-        private const string PostFollow = "friendships/create/{0}/";
-        private const string PostUnFollow = "friendships/destroy/{0}/";
 
         public AccountManager(IApiSettings apiSettings, IAuthSettings authSettings) : base(apiSettings, authSettings)
         {
@@ -44,23 +47,28 @@ namespace InstaBot.InstagramAPI.Manager
 
         public async Task<LoginResponseMessage> Login(bool force = false)
         {
+            return await Login(CancellationToken.None, force);
+        }
+        public async Task<LoginResponseMessage> Login(CancellationToken token, bool force = false)
+        {
             if (!force && !string.IsNullOrWhiteSpace(_authSettings.UserId) &&
                 !string.IsNullOrWhiteSpace(_authSettings.Token))
             {
                 try
                 {
-                    var timeline = await TimeLineFeed();
+                    var timeline = await TimeLineFeed(token);
                     if (!string.IsNullOrWhiteSpace(timeline.Message) && timeline.Message.Equals("login_required"))
-                        await Login(true);
+                        await Login(token, true);
                 }
                 catch (InstagramException ex)
                 {
-                    return await Login(true);
+                    //TODO logger
+                    return await Login(token, true);
                 }
 
                 return null;
             }
-            var response = await WebApi.InnerClient.GetAsync(string.Format(GetHeader, Guid.NewGuid().ToString("N")));
+            var response = await WebApi.InnerClient.GetAsync(string.Format(GetHeader, Guid.NewGuid().ToString("N")), token);
 
             if (!response.IsSuccessStatusCode)
                 throw new InstagramException("Couldn't get challenge, check your connection"); ;
@@ -73,7 +81,7 @@ namespace InstaBot.InstagramAPI.Manager
 
             var content = SignedContent(message.ToString());
 
-            var loginResponse = await WebApi.PostLoginAsync(PostLogin, content);
+            var loginResponse = await WebApi.PostLoginAsync(PostLogin, content, token);
             if (!loginResponse.IsSuccessStatusCode) throw new InstagramException(loginResponse.ReasonPhrase);
 
             var user =
@@ -84,11 +92,11 @@ namespace InstaBot.InstagramAPI.Manager
                     WebApi.ClientHandler.CookieContainer.GetCookies(new Uri(_apiSettings.Url))
                         .Cast<Cookie>();
 
-                var token = ExtractToken(loginResponse);
+                var cookieToken = ExtractToken(loginResponse);
                 if (string.IsNullOrWhiteSpace(csrfToken)) throw new InstagramException("Missing csfrtoken");
 
                 _authSettings.Guid = Guid.NewGuid().ToString();
-                _authSettings.Token = token;
+                _authSettings.Token = cookieToken;
                 _authSettings.UserId = user.LoggedInUser.Id;
                 _authSettings.Cookies = reponseCookie;
                 _authSettings.Save();
@@ -101,12 +109,21 @@ namespace InstaBot.InstagramAPI.Manager
 
         public async Task<bool> Logout()
         {
-            var logout = await WebApi.GetEntityAsync<LogoutResponseMessage>(PostLogout);
+            return await Logout(CancellationToken.None); 
+        }
+
+        public async Task<bool> Logout(CancellationToken token)
+        {
+            var logout = await WebApi.GetEntityAsync<LogoutResponseMessage>(PostLogout, token);
             return logout.Success;
         }
 
 
         public async Task<bool> SyncFeatures()
+        {
+            return await SyncFeatures(CancellationToken.None);
+        }
+        public async Task<bool> SyncFeatures(CancellationToken token)
         {
             dynamic syncMessage = new JObject();
             syncMessage._uuid = _authSettings.Guid;
@@ -117,56 +134,38 @@ namespace InstaBot.InstagramAPI.Manager
 
             var content = SignedContent(syncMessage.ToString());
 
-            var syncEntity = await WebApi.PostEntityAsync<SyncResponseMessage>(GetSync, content);
+            var syncEntity = await WebApi.PostEntityAsync<SyncResponseMessage>(GetSync, content, token);
             return true;
         }
+
         public async Task<AutoCompleteUserListResponseMessage> AutoCompleteUser()
         {
-            var autoCompleteUserList = await WebApi.GetEntityAsync<AutoCompleteUserListResponseMessage>(GetAutoCompleteUser);
+            return await AutoCompleteUser(CancellationToken.None);
+        }
+        public async Task<AutoCompleteUserListResponseMessage> AutoCompleteUser(CancellationToken token)
+        {
+            var autoCompleteUserList = await WebApi.GetEntityAsync<AutoCompleteUserListResponseMessage>(GetAutoCompleteUser, token);
             return autoCompleteUserList;
         }
 
         public async Task<UserInfoResponseMessage> UserInfo(string userid)
         {
-            var userInfo = await WebApi.GetEntityAsync<UserInfoResponseMessage>(string.Format(GetUserinfo, userid));
+            return await UserInfo(userid, CancellationToken.None);
+        }
+        public async Task<UserInfoResponseMessage> UserInfo(string userid, CancellationToken token)
+        {
+            var userInfo = await WebApi.GetEntityAsync<UserInfoResponseMessage>(string.Format(GetUserinfo, userid), token);
             return userInfo;
         }
 
         public async Task<TimelineFeedResponseMessage> TimeLineFeed()
         {
-            var timelineFeed = await WebApi.GetEntityAsync<TimelineFeedResponseMessage>(GetTimelineFeed);
+            return await TimeLineFeed(CancellationToken.None);
+        }
+        public async Task<TimelineFeedResponseMessage> TimeLineFeed(CancellationToken token)
+        {
+            var timelineFeed = await WebApi.GetEntityAsync<TimelineFeedResponseMessage>(GetTimelineFeed, token);
             return timelineFeed;
-        }
-        
-        public async Task<FollowResponseMessage> Follow(string userId)
-        {
-            MessageHub.PublishAsync(new BeforeFollowEvent(this, userId));
-            dynamic syncMessage = new JObject();
-            syncMessage._uuid = _authSettings.Guid;
-            syncMessage._uid = _authSettings.UserId;
-            syncMessage._csrftoken = _authSettings.Token;
-            syncMessage.user_id = userId;
-
-            var content = SignedContent(syncMessage.ToString());
-
-            var followReponse = await WebApi.PostEntityAsync<FollowResponseMessage>(string.Format(PostFollow, userId), content);
-
-            MessageHub.PublishAsync(new AfterFollowEvent(this, userId));
-            return followReponse;
-        }
-
-        public async Task<FollowResponseMessage> UnFollow(string userId)
-        {
-            dynamic syncMessage = new JObject();
-            syncMessage._uuid = _authSettings.Guid;
-            syncMessage._uid = _authSettings.UserId;
-            syncMessage._csrftoken = _authSettings.Token;
-            syncMessage.user_id = userId;
-
-            var content = SignedContent(syncMessage.ToString());
-
-            var followReponse = await WebApi.PostEntityAsync<FollowResponseMessage>(string.Format(PostUnFollow, userId), content);
-            return followReponse;
         }
 
         private string ExtractToken(HttpResponseMessage response)
