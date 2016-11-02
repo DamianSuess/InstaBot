@@ -22,7 +22,7 @@ namespace InstaBot.InstagramAPI.Manager
 
         public async Task<TagResponseMessage> SearchTags(string tag)
         {
-            return await SearchTags(tag);
+            return await SearchTags(tag, CancellationToken.None);
         }
         public async Task<TagResponseMessage> SearchTags(string tag, CancellationToken token)
         {

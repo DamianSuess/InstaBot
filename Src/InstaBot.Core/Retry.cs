@@ -37,6 +37,7 @@ namespace InstaBot.Core
         public static async Task<T> Do<T>(Task<T> task, CancellationToken token, RetryPolicy retryPolicy)
         {
             token.ThrowIfCancellationRequested();
+            var timeoutCancellationTokenSource = new CancellationTokenSource();
 
             if (task == null)
                 throw new ArgumentNullException(nameof(task), "task must be not null");
@@ -51,9 +52,17 @@ namespace InstaBot.Core
                 {
                     if (retry > 0)
                         await Task.Delay(retryPolicy.RetryInterval, token);
-
-                    var result = await task;
-                    return result;
+                    
+                    var completedTask = await Task.WhenAny(task, Task.Delay(retryPolicy.ActionExecutionTimeout, timeoutCancellationTokenSource.Token));
+                    if (completedTask == task)
+                    {
+                        timeoutCancellationTokenSource.Cancel();
+                        return await task;  // Very important in order to propagate exceptions
+                    }
+                    else
+                    {
+                        throw new TimeoutException("The operation has timed out.");
+                    }
                 }
                 catch (Exception ex)
                 {
