@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaBot.Data", "InstaBot.D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaBot.InstagramAPI", "InstaBot.InstagramAPI\InstaBot.InstagramAPI.csproj", "{07429B0E-DD7E-4B00-930A-564D2C6BB184}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{58D740E3-F062-4F15-9E1D-C658A7009179}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,5 +50,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2067E1D7-D875-43C1-9149-F9B34F7AC07E} = {58D740E3-F062-4F15-9E1D-C658A7009179}
 	EndGlobalSection
 EndGlobal

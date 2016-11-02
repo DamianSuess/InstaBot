@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using InstaBot.Core;
 using InstaBot.InstagramAPI.Domain;
 using InstaBot.InstagramAPI.Settings;
 
@@ -7,6 +9,7 @@ namespace InstaBot.InstagramAPI.Manager
     public interface ITagManager : IBaseManager
     {
         Task<TagResponseMessage> SearchTags(string tag);
+        Task<TagResponseMessage> SearchTags(string tag, CancellationToken token);
     }
 
     public class TagManager : BaseManager, ITagManager
@@ -19,7 +22,12 @@ namespace InstaBot.InstagramAPI.Manager
 
         public async Task<TagResponseMessage> SearchTags(string tag)
         {
-            var tags = await WebApi.GetEntityAsync<TagResponseMessage>(string.Format(GetSearchTag, tag, RankToken));
+            return await SearchTags(tag, CancellationToken.None);
+        }
+        public async Task<TagResponseMessage> SearchTags(string tag, CancellationToken token)
+        {
+            var tags = await Retry.Do(WebApi.GetEntityAsync<TagResponseMessage>(string.Format(GetSearchTag, tag, RankToken), token), token);
+
             return tags;
         }
 

@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using InstaBot.Core;
 using InstaBot.InstagramAPI.Domain;
 using InstaBot.InstagramAPI.Event;
 using InstaBot.InstagramAPI.Settings;
@@ -10,6 +12,8 @@ namespace InstaBot.InstagramAPI.Manager
     {
         Task<LikeResponseMessage> Like(Media media);
         Task<LikeResponseMessage> UnLike(string mediaId);
+        Task<LikeResponseMessage> Like(Media media, CancellationToken token);
+        Task<LikeResponseMessage> UnLike(string mediaId, CancellationToken token);
     }
 
     public class MediaManager : BaseManager, IMediaManager
@@ -23,6 +27,16 @@ namespace InstaBot.InstagramAPI.Manager
 
         public async Task<LikeResponseMessage> Like(Media media)
         {
+            return await Like(media, CancellationToken.None);
+        }
+
+        public async Task<LikeResponseMessage> UnLike(string mediaId)
+        {
+            return await UnLike(mediaId, CancellationToken.None);
+        }
+
+        public async Task<LikeResponseMessage> Like(Media media, CancellationToken token)
+        {
             MessageHub.PublishAsync(new BeforeLikeEvent(this, media));
             dynamic syncMessage = new JObject();
             syncMessage._uuid = _authSettings.Guid;
@@ -32,13 +46,13 @@ namespace InstaBot.InstagramAPI.Manager
 
             var content = SignedContent(syncMessage.ToString());
 
-            var likeResponse =
-                await WebApi.PostEntityAsync<LikeResponseMessage>(string.Format(PostLike, media.Id), content);
+            var likeResponse = await Retry.Do(WebApi.PostEntityAsync<LikeResponseMessage>(string.Format(PostLike, media.Id), content, token), token);
+
             MessageHub.PublishAsync(new AfterLikeEvent(this, media));
             return likeResponse;
         }
 
-        public async Task<LikeResponseMessage> UnLike(string mediaId)
+        public async Task<LikeResponseMessage> UnLike(string mediaId, CancellationToken token)
         {
             dynamic syncMessage = new JObject();
             syncMessage._uuid = _authSettings.Guid;
@@ -48,8 +62,8 @@ namespace InstaBot.InstagramAPI.Manager
 
             var content = SignedContent(syncMessage.ToString());
 
-            var likeResponse =
-                await WebApi.PostEntityAsync<LikeResponseMessage>(string.Format(PostUnLike, mediaId), content);
+            var likeResponse = await Retry.Do(WebApi.PostEntityAsync<LikeResponseMessage>(string.Format(PostUnLike, mediaId), content, token), token);
+
             return likeResponse;
         }
 

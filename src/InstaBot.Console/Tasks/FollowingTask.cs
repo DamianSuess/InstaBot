@@ -29,6 +29,7 @@ namespace InstaBot.Console.Tasks
         public IFeedManager FeedManager { get; set; }
         public ITagManager TagManager { get; set; }
         public IAccountManager AccountManager { get; set; }
+        public IFriendshipsManager FriendshipsManager { get; set; }
 
         public async Task Start()
         {
@@ -59,7 +60,7 @@ namespace InstaBot.Console.Tasks
                         Logger.Info($"UnFollow User {followedUser.Id}, following time was {DateTime.Now.Subtract(followedUser.FollowTime).ToString("g")}");
                         try
                         {
-                            await AccountManager.UnFollow(followedUser.Id);
+                            await FriendshipsManager.UnFollow(followedUser.Id);
                         }
                         catch (Exception ex)
                         {
@@ -137,7 +138,7 @@ namespace InstaBot.Console.Tasks
                     RepositoryFollowedUser.Save(new FollowedUser(user.User.Id));
                     try
                     {
-                        await AccountManager.Follow(user.User.Id);
+                        await FriendshipsManager.Follow(user.User.Id);
                     }
                     catch (InstagramException ex)
                     {
@@ -177,7 +178,7 @@ namespace InstaBot.Console.Tasks
             }
             foreach (var media in exploreReponse.Medias.Where(
                 x =>
-                x != null &&
+                    x != null &&
                     x.LikeCount >= ConfigurationManager.BotSettings.MinLikeToLike &&
                     x.LikeCount < ConfigurationManager.BotSettings.MaxLikeToLike && !x.HasLiked &&
                     (x.Caption == null || !x.Caption.Text.ToUpper().ContainsAny(stopTags))))
