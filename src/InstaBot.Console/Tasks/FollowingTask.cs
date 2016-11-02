@@ -177,6 +177,7 @@ namespace InstaBot.Console.Tasks
             }
             foreach (var media in exploreReponse.Medias.Where(
                 x =>
+                x != null &&
                     x.LikeCount >= ConfigurationManager.BotSettings.MinLikeToLike &&
                     x.LikeCount < ConfigurationManager.BotSettings.MaxLikeToLike && !x.HasLiked &&
                     (x.Caption == null || !x.Caption.Text.ToUpper().ContainsAny(stopTags))))

@@ -49,6 +49,7 @@ namespace InstaBot.Console.Tasks
 
                         var tagFeed = await FeedManager.TagFeed(tagEntity.Name);
                         var resultsTag = tagFeed.Items.Where(x =>
+                        x != null &&
                             x.LikeCount >= ConfigurationManager.BotSettings.MinLikeToLike &&
                             x.LikeCount < ConfigurationManager.BotSettings.MaxLikeToLike && !x.HasLiked &&
                             (x.Caption == null || !x.Caption.Text.ToUpper().ContainsAny(stopTags))).ToList();
