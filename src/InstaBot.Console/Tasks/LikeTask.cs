@@ -52,7 +52,8 @@ namespace InstaBot.Console.Tasks
                         x != null &&
                             x.LikeCount >= ConfigurationManager.BotSettings.MinLikeToLike &&
                             x.LikeCount < ConfigurationManager.BotSettings.MaxLikeToLike && !x.HasLiked &&
-                            (x.Caption == null || !x.Caption.Text.ToUpper().ContainsAny(stopTags))).ToList();
+                            (x.Caption == null || !x.Caption.Text.ToUpper().ContainsAny(stopTags)) &&
+                            (x.Comments == null || !x.Comments.Any(c => c.Text.ToUpper().ContainsAny(stopTags)))).ToList();
                         Logger.Trace($"Retrieved {resultsTag.Count} medias for tag {tagEntity.Name}");
                         medias.AddRange(resultsTag);
 

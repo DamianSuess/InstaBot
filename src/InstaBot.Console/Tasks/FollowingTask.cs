@@ -181,7 +181,8 @@ namespace InstaBot.Console.Tasks
                     x != null &&
                     x.LikeCount >= ConfigurationManager.BotSettings.MinLikeToLike &&
                     x.LikeCount < ConfigurationManager.BotSettings.MaxLikeToLike && !x.HasLiked &&
-                    (x.Caption == null || !x.Caption.Text.ToUpper().ContainsAny(stopTags))))
+                    (x.Caption == null || !x.Caption.Text.ToUpper().ContainsAny(stopTags)) &&
+                    (x.Comments == null || !x.Comments.Any(c => c.Text.ToUpper().ContainsAny(stopTags)))))
             {
                 medias.Enqueue(media);
             }
