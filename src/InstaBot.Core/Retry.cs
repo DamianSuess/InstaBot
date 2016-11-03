@@ -59,10 +59,7 @@ namespace InstaBot.Core
                         timeoutCancellationTokenSource.Cancel();
                         return await task;  // Very important in order to propagate exceptions
                     }
-                    else
-                    {
-                        throw new TimeoutException("The operation has timed out.");
-                    }
+                    throw new TimeoutException("The operation has timed out.");
                 }
                 catch (Exception ex)
                 {

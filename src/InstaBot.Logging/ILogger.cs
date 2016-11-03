@@ -8,6 +8,6 @@ namespace InstaBot.Logging
 {
     public interface ILogger
     {
-        void Log(LogLevel level, string msg, params object[] args);
+        void Log(LogLevel level, string msg, Exception exception, params object[] args);
     }
 }

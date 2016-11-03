@@ -64,7 +64,7 @@ namespace InstaBot.Console.Tasks
                         }
                         catch (Exception ex)
                         {
-                            Logger.Critical($"Critical error on unfollowing user {followedUser.Id}", ex);
+                            Logger.Warning($"Critical error on unfollowing user {followedUser.Id}", ex);
                             continue;
                         }
                         followedUser.UnFollowTime = DateTime.Now;
