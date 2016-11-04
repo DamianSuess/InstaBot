@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using InstaBot.Core;
 using InstaBot.Core.Domain;
 using InstaBot.Data.Repository;
 using InstaBot.InstagramAPI;
@@ -52,7 +54,7 @@ namespace InstaBot.Console.Tasks
                 var compareDate = DateTime.Now.Add(new TimeSpan(-6, 0, 0)); //TODO configure time
                 var unfollowList =
                     RepositoryFollowedUser.Query<FollowedUser>(
-                        x => x.FollowTime < compareDate && !x.UnFollowTime.HasValue);
+                        x => x.FollowTime < compareDate && !x.UnFollowTime.HasValue && !x.IgnoreTime.HasValue);
                 if (unfollowList.Any())
                 {
                     foreach (var followedUser in unfollowList)
@@ -61,6 +63,26 @@ namespace InstaBot.Console.Tasks
                         try
                         {
                             await FriendshipsManager.UnFollow(followedUser.Id);
+                        }
+                        catch (AggregateException ex)
+                        {
+                            ex.Handle((x) =>
+                            {
+                                if (x is InstagramApiException)
+                                {
+                                    var exception = x as InstagramApiException;
+                                    if (exception.StatusCode == HttpStatusCode.NotFound)
+                                    {
+                                        Logger.Warning($"Can't unfollow {followedUser.Id} 3 times, add to ignore");
+                                        followedUser.IgnoreTime = DateTime.Now;
+                                        RepositoryFollowedUser.Save(followedUser);
+                                        return true;
+                                    }
+                                }
+                                return false;
+                            });
+                            Logger.Warning($"Critical error on unfollowing user {followedUser.Id}", ex);
+                            continue;
                         }
                         catch (Exception ex)
                         {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace InstaBot.InstagramAPI
+namespace InstaBot.Core
 {
     public class InstagramException : Exception
     {

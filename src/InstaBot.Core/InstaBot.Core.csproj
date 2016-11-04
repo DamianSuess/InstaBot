@@ -61,6 +61,7 @@
     <Compile Include="Domain\EntityBase.cs" />
     <Compile Include="Domain\FollowedUser.cs" />
     <Compile Include="Domain\LikedMedia.cs" />
+    <Compile Include="InstagramException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Retry.cs" />
     <Compile Include="RetryPolicy.cs" />

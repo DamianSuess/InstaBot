@@ -74,7 +74,7 @@
     <Compile Include="Event\BeforeFollowEvent.cs" />
     <Compile Include="Event\BeforeLikeEvent.cs" />
     <Compile Include="Event\InstagramBaseEvent.cs" />
-    <Compile Include="InstagramException.cs" />
+    <Compile Include="InstagramApiException.cs" />
     <Compile Include="Manager\AccountManager.cs" />
     <Compile Include="Manager\BaseManager.cs" />
     <Compile Include="Manager\FeedManager.cs" />

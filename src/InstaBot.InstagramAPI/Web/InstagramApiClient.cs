@@ -46,10 +46,7 @@ namespace InstaBot.InstagramAPI.Web
         public async Task<T> GetEntityAsync<T>(string url, CancellationToken token) where T : BaseResponseMessage
         {
             var response = await SendRequest(url, token, HttpMethod.Get);
-            if (!response.IsSuccessStatusCode) throw new InstagramException($"Bad response status code: {response.StatusCode}");
-            var entity = JsonConvert.DeserializeObject<T>(response.Content.ReadAsStringAsync().Result);
-            if (!entity.Status.Equals("ok")) throw new InstagramException(entity.Message);
-            return entity;
+            return GetResponse<T>(response);
         }
         public async Task<HttpResponseMessage> PostLoginAsync(string url, HttpContent data, CancellationToken token)
         {
@@ -59,9 +56,16 @@ namespace InstaBot.InstagramAPI.Web
         public async Task<T> PostEntityAsync<T>(string url, HttpContent data, CancellationToken token) where T : BaseResponseMessage
         {
             var response = await SendRequest(url, token, HttpMethod.Post, data);
-            if (!response.IsSuccessStatusCode) throw new InstagramException($"Bad response status code: {response.StatusCode}");
-            var entity = JsonConvert.DeserializeObject<T>(response.Content.ReadAsStringAsync().Result);
-            if (!entity.Status.Equals("ok")) throw new InstagramException(entity.Message);
+            return GetResponse<T>(response);
+        }
+
+        private static T GetResponse<T>(HttpResponseMessage response) where T : BaseResponseMessage
+        {
+            if(response.StatusCode == HttpStatusCode.NotFound) throw new InstagramApiException(response.StatusCode,$"Bad response status code: {response.StatusCode}");
+            var result = response.Content.ReadAsStringAsync().Result;
+            var entity = JsonConvert.DeserializeObject<T>(result);
+            if (!response.IsSuccessStatusCode 
+                || !entity.Status.Equals("ok")) throw new InstagramApiException(response.StatusCode, entity,$"Bad response status code: {response.StatusCode}");
             return entity;
         }
 

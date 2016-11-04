@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using InstaBot.Console.Utils;
+using InstaBot.Core;
 using InstaBot.Core.Domain;
 using InstaBot.Data.Repository;
 using InstaBot.InstagramAPI;

@@ -8,9 +8,11 @@ namespace InstaBot.Core.Domain
         {
             FollowTime = DateTime.Now;
             UnFollowTime = null;
+            IgnoreTime = null;
         }
         
         public DateTime FollowTime { get; set; }
         public DateTime? UnFollowTime { get; set; }
+        public DateTime? IgnoreTime { get; set; }
     }
 }

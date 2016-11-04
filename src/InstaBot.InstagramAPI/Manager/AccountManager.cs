@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using InstaBot.Core;
 using InstaBot.InstagramAPI.Domain;
 using InstaBot.InstagramAPI.Event;
 using InstaBot.InstagramAPI.Settings;
