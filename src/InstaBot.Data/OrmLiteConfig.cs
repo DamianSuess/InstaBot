@@ -25,6 +25,11 @@ namespace InstaBot.Data
             var session =  factory.Open();
             session.CreateTableIfNotExists<LikedMedia>();
             session.CreateTableIfNotExists<FollowedUser>();
+
+            //v0.2
+            if (!session.ColumnExists<FollowedUser>(x => x.IgnoreTime))
+                session.AddColumn<FollowedUser>(x => x.IgnoreTime);
+
             return session;
         }
 
